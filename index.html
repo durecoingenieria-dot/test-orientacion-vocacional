@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6c5ce7">
+<title>Test vocacional · Carreras UNNE y UTN FRRE</title>
+<style>
+  :root {
+    --violeta: #7c6cf0;
+    --violeta-oscuro: #5b4bd6;
+    --azul: #4f8cff;
+    --verde: #3ecf9b;
+    --texto: #2b2745;
+    --texto-suave: #6b6788;
+    --borde: #e3dffa;
+    --tarjeta: #ffffff;
+    --sombra: 0 10px 30px rgba(91, 75, 214, .12);
+    --radio: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--texto);
+    line-height: 1.5;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f1eeff, #e6f1ff 55%, #e4f8ef);
+    background-attachment: fixed;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: center;
+  }
+  .app { width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 16px; }
+
+  .topbar { display: none; }
+  .topbar.visible { display: block; }
+  .progreso-info { display: flex; justify-content: space-between; font-size: .85rem; color: var(--texto-suave); margin-bottom: 8px; font-weight: 600; }
+  .barra { height: 10px; background: rgba(124,108,240,.15); border-radius: 99px; overflow: hidden; }
+  .barra > div {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--violeta), var(--azul), var(--verde));
+    border-radius: 99px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .tarjeta {
+    background: var(--tarjeta);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 28px 22px;
+    border: 1px solid var(--borde);
+  }
+  .pantalla { animation: entrar .35s ease both; }
+  .pantalla.atras { animation-name: entrarAtras; }
+  .pantalla.saliendo { animation: salir .18s ease both; }
+  @keyframes entrar { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+  @keyframes entrarAtras { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+  @keyframes salir { to { opacity: 0; transform: translateX(-18px); } }
+
+  .bienvenida { text-align: center; padding: 8px 0; }
+  h1 { font-size: clamp(1.6rem, 5.5vw, 2.2rem); line-height: 1.2; margin: 4px 0 12px; color: var(--violeta-oscuro); }
+  .bienvenida p { color: var(--texto-suave); font-size: 1.05rem; max-width: 540px; margin: 0 auto 14px; }
+  .como { text-align: left; background: #f6f4ff; border-radius: 14px; padding: 14px 18px; max-width: 540px; margin: 0 auto 18px; font-size: .95rem; color: var(--texto); }
+  .como strong { color: var(--violeta-oscuro); }
+  .como ul { margin: 6px 0 0 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 22px; }
+  .chip { background: #f3f1ff; color: var(--violeta-oscuro); border-radius: 99px; padding: 6px 14px; font-size: .85rem; font-weight: 600; }
+
+  .btn {
+    appearance: none; border: 0; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 1.05rem;
+    padding: 14px 28px; border-radius: 99px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--violeta), var(--azul));
+    box-shadow: 0 8px 20px rgba(91,75,214,.3);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(91,75,214,.35); }
+  .btn:active { transform: translateY(0); }
+  .btn.secundario { background: #fff; color: var(--violeta-oscuro); border: 2px solid var(--borde); box-shadow: none; }
+  .btn.secundario:hover { border-color: var(--violeta); }
+  .btn:focus-visible, .nivel:focus-visible, summary:focus-visible, .volver:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+
+  .seccion { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--violeta-oscuro); background: #f0edff; padding: 4px 12px; border-radius: 99px; margin-bottom: 14px; }
+  h2 { font-size: clamp(1.2rem, 4.6vw, 1.55rem); line-height: 1.35; margin-bottom: 22px; font-weight: 650; }
+  .escala { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .nivel {
+    appearance: none; cursor: pointer; font: inherit; color: inherit;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px;
+    background: #faf9ff; border: 2px solid var(--borde); border-radius: 14px;
+    padding: 12px 4px 10px; min-height: 84px;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .nivel .num { font-size: 1.4rem; font-weight: 800; color: var(--violeta-oscuro); line-height: 1; }
+  .nivel .etq { font-size: .72rem; line-height: 1.2; color: var(--texto-suave); font-weight: 600; text-align: center; }
+  .nivel:hover { border-color: var(--violeta); background: #f3f1ff; transform: translateY(-2px); }
+  .nivel.elegida { border-color: var(--violeta-oscuro); background: var(--violeta-oscuro); box-shadow: 0 6px 16px rgba(91,75,214,.3); }
+  .nivel.elegida .num, .nivel.elegida .etq { color: #fff; }
+  .nav-pregunta { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .volver { background: none; border: 0; font: inherit; font-weight: 600; color: var(--texto-suave); cursor: pointer; padding: 8px 4px; border-radius: 8px; }
+  .volver:hover { color: var(--violeta-oscuro); }
+  .volver[disabled] { visibility: hidden; }
+  .ayuda-teclas { font-size: .78rem; color: var(--texto-suave); display: none; }
+  @media (hover: hover) and (pointer: fine) { .ayuda-teclas { display: block; } }
+
+  .resultado-cabecera { text-align: center; padding: 6px 0 18px; }
+  .resultado-cabecera .etiqueta { font-size: .82rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto-suave); }
+  .resultado-cabecera h2 { margin: 8px 0; font-size: clamp(1.5rem, 6vw, 2rem); color: var(--acento, var(--violeta-oscuro)); }
+  .resultado-cabecera .lema { font-weight: 600; margin-bottom: 10px; }
+  .resultado-cabecera .mensaje { color: var(--texto-suave); max-width: 580px; margin: 0 auto; }
+  h3 { font-size: 1.12rem; margin: 26px 0 6px; }
+  .sub { font-size: .9rem; color: var(--texto-suave); margin-bottom: 12px; }
+  .carreras { display: grid; gap: 12px; }
+  .carrera {
+    border: 2px solid var(--borde); border-left: 6px solid var(--acento, var(--violeta));
+    border-radius: 16px; padding: 16px; background: #fff;
+    animation: entrar .45s ease both;
+  }
+  .carrera.otra { border-left-color: var(--azul); }
+  .carrera h4 { font-size: 1.08rem; line-height: 1.3; margin-bottom: 6px; }
+  .etiquetas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .etq-tag { font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: #f3f1ff; color: var(--violeta-oscuro); }
+  .etq-tag.uni { background: #e7f0ff; color: #2d5fc4; }
+  .etq-tag.dur { background: #e4f8ef; color: #1d8a63; }
+  .carrera p { font-size: .94rem; color: var(--texto-suave); }
+  .afin-fila { display: flex; justify-content: space-between; font-size: .85rem; font-weight: 700; margin: 4px 0 4px; }
+  .afin-barra { height: 10px; border-radius: 99px; background: #efecfb; overflow: hidden; margin-bottom: 10px; }
+  .afin-barra > div { height: 100%; width: 0; border-radius: 99px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; font-weight: 700; font-size: .9rem; color: var(--violeta-oscuro); padding: 4px 0; border-radius: 6px; }
+  details p { margin-top: 6px; }
+  .ranking { display: grid; gap: 8px; margin-top: 12px; }
+  .ranking .fila-nombre { display: flex; justify-content: space-between; gap: 10px; font-size: .88rem; font-weight: 600; }
+  .ranking .fila-nombre span:last-child { white-space: nowrap; }
+  .ranking .afin-barra { margin-bottom: 0; height: 8px; }
+  .segunda { background: #f6f4ff; border-radius: 16px; padding: 14px 16px; margin-top: 18px; font-size: .95rem; }
+  .segunda strong { color: var(--violeta-oscuro); }
+  .nota { background: #fff7e6; border: 1px solid #ffe1a8; color: #7a5a12; border-radius: 12px; padding: 12px 14px; font-size: .9rem; margin-bottom: 14px; }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 26px; }
+  .aviso { font-size: .8rem; color: var(--texto-suave); text-align: center; margin-top: 18px; }
+  .autor { font-size: .75rem; color: var(--texto-suave); text-align: center; margin-top: 12px; opacity: .85; }
+
+  @media (min-width: 600px) {
+    .tarjeta { padding: 36px 40px; }
+    .nivel { min-height: 92px; }
+    .nivel .etq { font-size: .8rem; }
+  }
+  @media (max-width: 380px) {
+    .escala { gap: 5px; }
+    .nivel .etq { font-size: .66rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="topbar" id="topbar">
+    <div class="progreso-info"><span id="progTexto"></span><span id="progPct"></span></div>
+    <div class="barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barra"><div id="barraRelleno"></div></div>
+  </div>
+  <section class="tarjeta" id="tarjeta" aria-live="polite"></section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     BASE DE DATOS — 76 carreras UNNE + UTN FRRe
+     c = perfil primario
+     tags = áreas de interés (para scoring fino)
+     ===================================================================== */
+  var CARRERAS = [
+    // —— DISEÑO Y CREATIVIDAD (D) ——
+    {id:'AR',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Arquitectura',y:'6 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de proyectar, dirigir y gestionar obras de arquitectura y urbanismo, con sensibilidad estética, conocimiento técnico y compromiso social y ambiental.',
+     e:'Diseño arquitectónico, historia, estructuras, construcción, urbanismo, instalaciones, representación gráfica y gestión de proyectos.',
+     tags:['diseño','espacio','construcción','creatividad','técnico']},
+    {id:'DG',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Diseño Gráfico',y:'4 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Diseñador capaz de conceptualizar y desarrollar soluciones de comunicación visual para distintos soportes y medios, con mirada crítica y sensibilidad estética.',
+     e:'Tipografía, composición, identidad visual, diseño editorial, packaging, diseño digital, ilustración y semiótica.',
+     tags:['diseño','visual','creatividad','digital','comunicación']},
+    {id:'DI',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Licenciatura en Diseño Industrial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional que proyecta objetos y sistemas de uso cotidiano o industrial, integrando aspectos formales, funcionales, técnicos, ergonómicos y de mercado.',
+     e:'Diseño de productos, ergonomía, materiales, prototipado, procesos productivos y sustentabilidad.',
+     tags:['diseño','producto','creatividad','técnico','materiales']},
+    {id:'AV',c:'D',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Diseño de Imagen, Sonido y Multimedia',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capaz de producir y editar contenidos audiovisuales y multimedia para distintos medios y plataformas.',
+     e:'Producción audiovisual, diseño de sonido, edición de video, animación, multimedia y postproducción.',
+     tags:['audiovisual','digital','creatividad','sonido','medios']},
+
+    // —— ARTE, CULTURA Y EDUCACIÓN (H) ——
+    {id:'AC',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Artes Combinadas',y:'4 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Artista y gestor con formación integral en distintas disciplinas artísticas, capaz de producir, investigar y mediar entre el arte y la sociedad.',
+     e:'Artes visuales, música, teatro, danza, medios audiovisuales, historia del arte y gestión cultural.',
+     tags:['arte','cultura','creatividad','expresión','interdisciplina']},
+    {id:'GC',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Gestión y Desarrollo Cultural',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de diseñar, gestionar y evaluar políticas y proyectos culturales con mirada estratégica y territorial.',
+     e:'Políticas culturales, gestión de instituciones, economía de la cultura, planificación estratégica y desarrollo territorial.',
+     tags:['cultura','gestión','políticas','territorio','proyectos']},
+    {id:'TG',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Gestión y Desarrollo Cultural',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capacitado para organizar, administrar y desarrollar proyectos y actividades culturales en distintos contextos.',
+     e:'Gestión cultural, producción de eventos, administración de proyectos y comunicación cultural.',
+     tags:['cultura','gestión','eventos','organización']},
+    {id:'ED',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Ciencias de la Educación',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de investigar, diseñar y gestionar políticas y proyectos educativos en distintos niveles del sistema.',
+     e:'Teorías educativas, política y gestión educativa, curriculum, evaluación e investigación.',
+     tags:['educación','pedagogía','gestión','investigación']},
+    {id:'PE',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Ciencias de la Educación',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente e investigador capacitado para enseñar y reflexionar sobre los procesos educativos en distintos niveles y contextos.',
+     e:'Pedagogía, didáctica, psicología educativa, política educativa y práctica docente.',
+     tags:['educación','docencia','pedagogía']},
+    {id:'EI',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Educación Inicial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente capacitado para educar y acompañar el desarrollo de niños y niñas en el nivel inicial.',
+     e:'Pedagogía de la primera infancia, didácticas específicas, juego y práctica docente.',
+     tags:['educación','infancia','docencia','cuidado']},
+    {id:'LE',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Educación Inicial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de investigar, gestionar y diseñar propuestas educativas para la primera infancia.',
+     e:'Pedagogía de la primera infancia, políticas de educación inicial, investigación y gestión.',
+     tags:['educación','infancia','gestión','investigación']},
+    {id:'PF',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Filosofía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente capacitado para enseñar filosofía y promover el pensamiento crítico y reflexivo.',
+     e:'Historia de la filosofía, lógica, ética, filosofía de la ciencia y didáctica de la filosofía.',
+     tags:['filosofía','docencia','pensamiento','humanidades']},
+    {id:'LF',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Filosofía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Filósofo capaz de investigar, enseñar y aplicar el pensamiento filosófico a problemas contemporáneos.',
+     e:'Historia de la filosofía, metafísica, epistemología, ética y filosofía política.',
+     tags:['filosofía','investigación','humanidades','pensamiento']},
+    {id:'PG',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Geografía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente capacitado para enseñar geografía y promover la comprensión del territorio y las relaciones sociedad-naturaleza.',
+     e:'Geografía física y humana, cartografía, SIG y didáctica de la geografía.',
+     tags:['geografía','docencia','territorio','ambiente']},
+    {id:'LG',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Geografía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Geógrafo capaz de analizar, planificar y gestionar el territorio desde una perspectiva integral.',
+     e:'Geografía física, humana, económica, cartografía, SIG y ordenamiento territorial.',
+     tags:['geografía','territorio','ambiente','planificación']},
+    {id:'PH',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Historia',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente capacitado para enseñar historia y promover la comprensión crítica del pasado y su relación con el presente.',
+     e:'Historia argentina, americana y mundial, historiografía y didáctica de la historia.',
+     tags:['historia','docencia','humanidades']},
+    {id:'LH',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Historia',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Historiador capaz de investigar, interpretar y comunicar procesos históricos con rigor metodológico.',
+     e:'Historia argentina, americana y mundial, teoría y metodología de la historia.',
+     tags:['historia','investigación','humanidades','patrimonio']},
+    {id:'PL',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Letras',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Docente capacitado para enseñar lengua y literatura, y promover la lectura crítica y la expresión escrita.',
+     e:'Literatura argentina, latinoamericana y universal, lingüística y didáctica de la lengua y la literatura.',
+     tags:['literatura','docencia','lengua','escritura']},
+    {id:'LL',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Letras',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Licenciado en Letras capaz de investigar, criticar y producir conocimiento sobre la literatura y el lenguaje.',
+     e:'Literatura, lingüística, teoría literaria y crítica.',
+     tags:['literatura','investigación','lengua','escritura']},
+    {id:'CI',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Ciencias de la Información',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de gestionar, organizar y preservar información y documentos en archivos, bibliotecas y centros de documentación.',
+     e:'Organización del conocimiento, archivística, bibliotecología, preservación documental y sistemas de información.',
+     tags:['información','archivos','bibliotecas','organización']},
+    {id:'ARQ',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Archivista',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capacitado para organizar, describir y preservar documentos de archivo.',
+     e:'Organización de archivos, clasificación documental, preservación y descripción archivística.',
+     tags:['archivos','organización','patrimonio']},
+    {id:'BIB',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Bibliotecario',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capacitado para gestionar servicios bibliotecarios y de información.',
+     e:'Catalogación, servicios de información, promoción de la lectura y gestión de colecciones.',
+     tags:['bibliotecas','información','organización','lectura']},
+    {id:'CS',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Comunicación Social',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Comunicador capaz de producir, analizar y gestionar procesos de comunicación en medios, instituciones y organizaciones.',
+     e:'Teorías de la comunicación, periodismo, producción audiovisual, comunicación institucional y opinión pública.',
+     tags:['comunicación','medios','periodismo','escritura']},
+    {id:'PEJ',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Tecnicatura en Periodismo',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Técnico capacitado para producir contenidos periodísticos en distintos soportes.',
+     e:'Periodismo gráfico, radial, televisivo y digital, técnicas de entrevista y redacción.',
+     tags:['periodismo','medios','escritura','comunicación']},
+    {id:'TE',c:'H',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ciclo de Licenciatura en Tecnología Educativa',y:'Por verificar',t:'Ciclo de complementación',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de diseñar, implementar y gestionar propuestas educativas mediadas por tecnología.',
+     e:'Integración de tecnologías en educación, materiales digitales, entornos virtuales y gestión de tecnología educativa.',
+     tags:['educación','tecnología','digital','diseño']},
+
+    // —— TURISMO Y SERVICIOS (N / mixto) ——
+    {id:'TU',c:'N',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Turismo',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Profesional capaz de planificar, gestionar y desarrollar destinos y productos turísticos de manera sustentable e integral.',
+     e:'Planificación turística, gestión de destinos, marketing turístico, patrimonio y sustentabilidad.',
+     tags:['turismo','gestión','territorio','servicio','sustentabilidad']},
+    {id:'TT',c:'N',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Turismo',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Técnico capacitado para operar y asistir en la gestión de servicios y productos turísticos.',
+     e:'Gestión turística, hotelería, agencias de viajes, marketing turístico y servicio al cliente.',
+     tags:['turismo','servicio','hospitalidad','organización']},
+
+    // —— NEGOCIOS, ECONOMÍA Y GESTIÓN (N) ——
+    {id:'CP',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Contador Público',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capacitado para registrar, analizar e interpretar información económica y financiera, y asesorar en aspectos contables, impositivos y societarios.',
+     e:'Contabilidad, auditoría, costos, tributación, finanzas y derecho comercial.',
+     tags:['números','finanzas','normas','análisis','organización']},
+    {id:'AD',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Administración',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de gestionar organizaciones, tomar decisiones estratégicas y liderar equipos en distintos tipos de empresas e instituciones.',
+     e:'Administración, marketing, recursos humanos, finanzas, operaciones y estrategia empresarial.',
+     tags:['gestión','negocios','liderazgo','organización','estrategia']},
+    {id:'EC',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Economía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Economista capaz de analizar y explicar fenómenos económicos, diseñar políticas y asesorar en decisiones económicas a nivel micro y macro.',
+     e:'Microeconomía, macroeconomía, econometría, finanzas públicas y políticas económicas.',
+     tags:['economía','análisis','datos','políticas','números']},
+    {id:'RL',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Relaciones Laborales',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Profesional capaz de gestionar integralmente las relaciones laborales y el capital humano en organizaciones, con mirada estratégica y jurídica.',
+     e:'Derecho del trabajo, negociación colectiva, gestión de RRHH, sociología del trabajo y políticas de empleo.',
+     tags:['rrhh','trabajo','negociación','gestión','personas']},
+    {id:'ARL',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Analista en Relaciones Laborales',y:'2 años y medio',t:'Grado',sede:'Corrientes Capital',
+     p:'Analista capacitado para intervenir en las relaciones entre empleadores y trabajadores, y en la gestión de personal.',
+     e:'Derecho laboral, negociación colectiva, administración de personal y conflictos laborales.',
+     tags:['rrhh','trabajo','mediación','organización']},
+    {id:'CE',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Comercio Exterior',y:'5 años',t:'Grado',sede:'Paso de los Libres, Corrientes',
+     p:'Profesional capacitado para gestionar operaciones de comercio exterior y desarrollar estrategias de inserción internacional de empresas.',
+     e:'Comercio internacional, logística internacional, aduanas, marketing internacional y contratos.',
+     tags:['comercio','internacional','logística','negocios','gestión']},
+    {id:'ARU',c:'N',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Licenciatura en Administración Rural',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Profesional capaz de administrar y gestionar empresas y establecimientos agropecuarios de manera eficiente.',
+     e:'Administración de empresas agropecuarias, economía agraria, comercialización y gestión de la producción.',
+     tags:['agro','gestión','negocios','campo','organización']},
+    {id:'LOG',c:'N',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Logística',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capaz de gestionar operaciones logísticas y de cadena de suministro en empresas.',
+     e:'Cadena de suministro, almacenamiento, transporte, distribución y comercio exterior básico.',
+     tags:['logística','organización','transporte','operaciones']},
+    {id:'AGA',c:'N',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Licenciatura en Administración y Gestión Agropecuaria',y:'1 año y un cuatrimestre',t:'Ciclo de complementación',sede:'Curuzú Cuatiá, Corrientes',
+     p:'Profesional capaz de gestionar integralmente empresas y establecimientos agropecuarios.',
+     e:'Administración, economía agraria, comercialización, finanzas y gestión de la producción.',
+     tags:['agro','gestión','campo','negocios']},
+    {id:'TAE',c:'N',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Tecnicatura en Administración de Empresas',y:'2 años y medio',t:'Pregrado',sede:'Curuzú Cuatiá, Corrientes',
+     p:'Técnico capacitado para apoyar la gestión administrativa y operativa de empresas, especialmente pymes.',
+     e:'Administración general, contabilidad básica, marketing, recursos humanos y gestión de pymes.',
+     tags:['gestión','organización','negocios','pymes']},
+
+    // —— TECNOLOGÍA Y COMPUTACIÓN (T) ——
+    {id:'SI',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería en Sistemas de Información',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de analizar, diseñar, desarrollar y gestionar sistemas de información y soluciones de software para organizaciones.',
+     e:'Análisis y diseño de sistemas, programación, bases de datos, ingeniería de software, redes y seguridad.',
+     tags:['programación','sistemas','software','datos','tecnología']},
+    {id:'LS',c:'T',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Sistemas de Información',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Profesional capaz de analizar, diseñar, implementar y gestionar sistemas de información en organizaciones.',
+     e:'Análisis y diseño de sistemas, bases de datos, ingeniería de software, redes y seguridad informática.',
+     tags:['programación','sistemas','software','datos','tecnología']},
+    {id:'PR',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Programación',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico programador capaz de desarrollar y mantener aplicaciones de software.',
+     e:'Lenguajes de programación, algoritmos, bases de datos, desarrollo web y fundamentos de software.',
+     tags:['programación','software','digital','lógica']},
+    {id:'PRD',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Programación a Distancia',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico programador capaz de desarrollar aplicaciones de software, con formación adquirida en modalidad a distancia.',
+     e:'Programación, algoritmos, bases de datos y desarrollo de aplicaciones (modalidad a distancia).',
+     tags:['programación','software','digital','autonomía']},
+    {id:'APU',c:'T',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Analista Programador Universitario',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Analista programador capaz de diseñar, desarrollar y mantener aplicaciones de software.',
+     e:'Programación, algoritmos, estructuras de datos, bases de datos y desarrollo de software.',
+     tags:['programación','software','lógica','sistemas']},
+
+    // —— INGENIERÍA E INDUSTRIA (I) ——
+    {id:'QU',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería Química',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de diseñar, operar y optimizar procesos químicos e industriales de transformación de la materia.',
+     e:'Química, operaciones unitarias, reactores, control de procesos, termodinámica y diseño de plantas.',
+     tags:['procesos','química','industria','técnico','laboratorio']},
+    {id:'EM',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería Electromecánica',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero orientado al diseño, operación y mantenimiento de sistemas electromecánicos en entornos industriales.',
+     e:'Mecánica, electricidad, electrónica industrial, automatización, máquinas y mantenimiento.',
+     tags:['máquinas','electricidad','automatización','industria','técnico']},
+    {id:'EMU',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Electromecánica',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de diseñar, operar y mantener sistemas que integran componentes mecánicos y eléctricos en la industria.',
+     e:'Mecánica, electricidad, máquinas térmicas y eléctricas, automatización y mantenimiento industrial.',
+     tags:['máquinas','electricidad','automatización','industria','técnico']},
+    {id:'MC',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería en Mecatrónica',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de diseñar e integrar sistemas que combinan mecánica, electrónica y control (robótica, automatización avanzada).',
+     e:'Mecánica, electrónica, control automático, robótica, sistemas embebidos y diseño mecatrónico.',
+     tags:['robótica','automatización','electrónica','máquinas','innovación']},
+    {id:'TMC',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Mecatrónica',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capaz de instalar, operar y mantener sistemas mecatrónicos y de automatización.',
+     e:'Mecánica, electrónica, control, robótica básica y sistemas automatizados.',
+     tags:['robótica','automatización','electrónica','técnico']},
+    {id:'CIV',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Civil',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de proyectar, dirigir y gestionar obras de infraestructura civil (edificios, caminos, puentes, obras hidráulicas).',
+     e:'Estructuras, hidráulica, geotecnia, caminos, construcciones, materiales y gestión de obras.',
+     tags:['construcción','estructuras','obras','técnico','territorio']},
+    {id:'MEC',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Mecánica',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
+     p:'Ingeniero capaz de diseñar, fabricar y mantener máquinas y sistemas mecánicos.',
+     e:'Mecánica de sólidos y fluidos, diseño de máquinas, termodinámica, materiales y fabricación.',
+     tags:['máquinas','diseño','técnico','industria','materiales']},
+    {id:'ELE',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería Eléctrica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Ingeniero capaz de diseñar, proyectar y dirigir sistemas de generación, transmisión, distribución y utilización de la energía eléctrica.',
+     e:'Circuitos, máquinas eléctricas, generación y distribución de energía, electrónica de potencia e instalaciones.',
+     tags:['electricidad','energía','técnico','instalaciones']},
+    {id:'ELN',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería en Electrónica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Ingeniero capaz de diseñar, desarrollar y mantener sistemas electrónicos y de control para diversas aplicaciones.',
+     e:'Circuitos electrónicos, microprocesadores, comunicaciones, control automático e instrumentación.',
+     tags:['electrónica','control','tecnología','sistemas','innovación']},
+    {id:'AGR',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería en Agrimensura',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Ingeniero capacitado para medir, representar y gestionar el territorio y la propiedad inmueble con precisión técnica y jurídica.',
+     e:'Topografía, geodesia, cartografía, sistemas de información geográfica (SIG) y catastro.',
+     tags:['territorio','medición','técnico','mapas','precisión']},
+    {id:'IND',c:'I',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Ingeniería Industrial',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Ingeniero orientado a la mejora de procesos, la eficiencia y la gestión de sistemas productivos e industriales.',
+     e:'Procesos productivos, optimización, logística, calidad, gestión de operaciones e ingeniería de métodos.',
+     tags:['procesos','eficiencia','industria','organización','logística']},
+    {id:'RED',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Operaciones y Mantenimiento de Redes Eléctricas',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
+     p:'Técnico capacitado para operar y mantener redes y sistemas de distribución eléctrica.',
+     e:'Redes de distribución eléctrica, operación, mantenimiento, seguridad eléctrica y sistemas de potencia.',
+     tags:['electricidad','redes','mantenimiento','técnico','energía']},
+
+    // —— AGRO Y PRODUCCIÓN (A — nuevo perfil o dentro de I/N) ——
+    {id:'AGN',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Ingeniería Agronómica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Ingeniero capaz de planificar, dirigir y asesorar sistemas de producción agropecuaria de manera eficiente y sustentable.',
+     e:'Producción vegetal y animal, suelos, fitopatología, maquinaria agrícola, economía agraria y extensión rural.',
+     tags:['agro','campo','producción','naturaleza','técnico']},
+    {id:'API',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Tecnicatura Universitaria en Apicultura',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Técnico especializado en la producción apícola, capaz de manejar apiarios y desarrollar la cadena de valor de la miel y productos de la colmena.',
+     e:'Biología de la abeja, manejo de colmenas, sanidad apícola, producción de miel y comercialización.',
+     tags:['agro','campo','producción','naturaleza','abejas']},
+    {id:'MECAG',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Tecnicatura Universitaria en Mecanización Agraria',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Técnico capaz de operar, mantener y asesorar sobre maquinaria y equipamiento agrícola.',
+     e:'Maquinaria agrícola, mantenimiento, operación de equipos, tecnología de precisión e hidráulica.',
+     tags:['agro','máquinas','campo','técnico','mantenimiento']},
+
+    // —— CIENCIAS EXACTAS E INVESTIGACIÓN (X) ——
+    {id:'MAT',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Matemática',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Matemático con sólida formación teórica y capacidad para aplicar el razonamiento abstracto a problemas científicos, tecnológicos o educativos.',
+     e:'Álgebra, análisis matemático, geometría, topología, probabilidad, estadística y matemática aplicada.',
+     tags:['matemática','lógica','análisis','investigación','abstracto']},
+    {id:'FIS',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Físicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Físico con formación sólida en los fundamentos de la física y capacidad para investigar, modelar y aplicar conocimientos a problemas científicos y tecnológicos.',
+     e:'Mecánica, electromagnetismo, termodinámica, física cuántica, óptica y física experimental.',
+     tags:['física','investigación','laboratorio','análisis','ciencia']},
+    {id:'QUI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Químicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Químico capaz de investigar, analizar y desarrollar sustancias y procesos químicos en ámbitos científicos e industriales.',
+     e:'Química general, orgánica, inorgánica, analítica, físico-química y bioquímica.',
+     tags:['química','laboratorio','investigación','análisis','ciencia']},
+    {id:'BIO',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Biológicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Biólogo con formación integral capaz de investigar, conservar y gestionar la biodiversidad y los sistemas biológicos.',
+     e:'Biología celular y molecular, genética, ecología, zoología, botánica, microbiología y conservación.',
+     tags:['biología','naturaleza','investigación','laboratorio','ambiente']},
+    {id:'PM',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Matemática',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Docente capacitado para enseñar matemática en el nivel secundario y superior, con sólida formación disciplinar y pedagógica.',
+     e:'Álgebra, análisis, geometría, probabilidad, pedagogía y didáctica de la matemática.',
+     tags:['matemática','docencia','lógica','educación']},
+    {id:'PFI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Física',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Docente capacitado para enseñar física en el nivel secundario y superior, integrando teoría, experimentación y didáctica.',
+     e:'Mecánica, electromagnetismo, termodinámica, física moderna, pedagogía y didáctica de la física.',
+     tags:['física','docencia','ciencia','educación']},
+    {id:'PQU',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Ciencias Químicas y del Ambiente',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Docente capacitado para enseñar química y temas ambientales en el nivel secundario, con mirada interdisciplinaria.',
+     e:'Química, ciencias ambientales, pedagogía y didáctica de las ciencias.',
+     tags:['química','ambiente','docencia','educación']},
+    {id:'PBI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Biología',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Docente capacitado para enseñar biología en el nivel secundario, integrando conocimientos científicos y estrategias didácticas.',
+     e:'Biología celular, molecular, ecología, biodiversidad, pedagogía y didáctica de la biología.',
+     tags:['biología','docencia','naturaleza','educación']},
+
+    // —— SALUD (S) ——
+    {id:'MD',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Medicina',y:'6 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Médico capaz de diagnosticar, tratar y prevenir enfermedades, y de ejercer la medicina con responsabilidad ética y social.',
+     e:'Ciencias básicas, clínicas (medicina interna, cirugía, pediatría, ginecología), salud pública e internado.',
+     tags:['salud','cuidado','personas','ciencia','clínica']},
+    {id:'ENF',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Licenciatura en Enfermería',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Licenciado en Enfermería capaz de brindar cuidados integrales de salud, gestionar servicios de enfermería y participar en equipos de salud.',
+     e:'Cuidados de enfermería, anatomía, fisiología, farmacología, salud pública y práctica clínica.',
+     tags:['salud','cuidado','personas','servicio']},
+    {id:'KIN',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Licenciatura en Kinesiología y Fisiatría',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Kinesiólogo capaz de evaluar, tratar y rehabilitar disfunciones del movimiento y del sistema musculoesquelético.',
+     e:'Anatomía, fisiología, biomecánica, técnicas kinesiológicas, rehabilitación y agentes físicos.',
+     tags:['salud','movimiento','rehabilitación','cuidado','cuerpo']},
+    {id:'ODO',c:'S',u:'UNNE',f:'Facultad de Odontología',n:'Odontología',y:'5 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Odontólogo capaz de diagnosticar, prevenir y tratar enfermedades de la cavidad bucal y del sistema estomatognático.',
+     e:'Anatomía y fisiología bucal, operatoria dental, endodoncia, periodoncia, cirugía y prótesis.',
+     tags:['salud','cuidado','precisión','clínica']},
+    {id:'BQ',c:'S',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Bioquímica',y:'6 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Bioquímico capaz de realizar, interpretar y validar análisis clínicos y de laboratorio, y de participar en investigación biomédica.',
+     e:'Química, biología molecular, bioquímica clínica, microbiología, inmunología y análisis clínicos.',
+     tags:['laboratorio','salud','análisis','ciencia','diagnóstico']},
+    {id:'VET',c:'S',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Ciencias Veterinarias',y:'5 años y medio',t:'Grado',sede:'Corrientes Capital',
+     p:'Médico veterinario capaz de diagnosticar, tratar y prevenir enfermedades animales, y de intervenir en la producción animal y la salud pública.',
+     e:'Anatomía, fisiología, patología, clínica de animales, salud pública y producción animal.',
+     tags:['animales','salud','campo','cuidado','ciencia']},
+    {id:'GIS',c:'S',u:'UNNE',f:'Facultad de Odontología',n:'Tecnicatura Universitaria en Gestión de Instituciones Universitarias del Área de la Salud',y:'2 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Técnico capacitado para apoyar la gestión administrativa y organizacional de instituciones universitarias del área de la salud.',
+     e:'Gestión universitaria, administración de instituciones de salud, normativa y gestión de recursos.',
+     tags:['gestión','salud','organización','instituciones']},
+
+    // —— DERECHO, JUSTICIA Y SEGURIDAD (J) ——
+    {id:'AB',c:'J',u:'UNNE',f:'Facultad de Derecho y Cs. Sociales y Políticas',n:'Abogacía',y:'6 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Abogado capaz de asesorar, representar y defender intereses jurídicos de personas e instituciones en distintos fueros.',
+     e:'Derecho civil, penal, constitucional, administrativo, laboral, comercial y procesal.',
+     tags:['derecho','justicia','argumentación','normas','personas']},
+    {id:'MAR',c:'J',u:'UNNE',f:'Facultad de Derecho y Cs. Sociales y Políticas',n:'Martillero Público y Corredor de Comercio',y:'2 años',t:'Pregrado',sede:'Corrientes Capital',
+     p:'Profesional capacitado para realizar remates públicos y privados, y actuar como intermediario en operaciones comerciales e inmobiliarias.',
+     e:'Derecho comercial, valuaciones, procedimientos de remate y corretaje inmobiliario.',
+     tags:['comercio','inmobiliario','negociación','organización']},
+    {id:'CR',c:'J',u:'UNNE',f:'Instituto de Cs. Criminalísticas y Criminología',n:'Licenciatura en Criminalística',y:'4 años',t:'Grado',sede:'Corrientes Capital',
+     p:'Criminalista capaz de aplicar métodos científicos al análisis de evidencias en el marco de investigaciones judiciales.',
+     e:'Criminalística, medicina legal, balística, documentología, papiloscopía y química forense.',
+     tags:['investigación','ciencia','justicia','análisis','forense']},
+    {id:'SEG',c:'J',u:'UNNE',f:'Instituto de Cs. Criminalísticas y Criminología',n:'Licenciatura en Seguridad Pública y Ciudadana',y:'1 año y medio',t:'Ciclo de complementación',sede:'Corrientes Capital',
+     p:'Profesional capaz de analizar, diseñar y gestionar políticas y estrategias de seguridad pública y ciudadana.',
+     e:'Políticas de seguridad, gestión de la seguridad pública, prevención del delito y derechos humanos.',
+     tags:['seguridad','políticas','gestión','prevención']}
+  ];
+
+  /* =====================================================================
+     PERFILES
+     ===================================================================== */
+  var PERFILES = {
+    T: { nombre:'Tecnología y Computación', color:'#5b7cfa',
+         lema:'Te mueven la lógica, la innovación y construir cosas que antes no existían.',
+         msg:'Dentro de 10 años el mundo va a necesitar más personas que sepan crear, automatizar y entender la tecnología. Tus respuestas muestran interés genuino por resolver problemas con código, datos y sistemas. Es un camino con fuerte salida laboral en la región y también a distancia.' },
+    I: { nombre:'Ingeniería e Industria', color:'#e0894a',
+         lema:'Te gusta entender cómo funcionan las cosas y hacer que funcionen mejor.',
+         msg:'La región necesita gente que sostenga la energía, la industria y la infraestructura. Tus respuestas combinan interés por la técnica, el cálculo y el trabajo concreto: podrías ver con tus propios ojos las obras, las máquinas y los procesos que ayudaste a crear.' },
+    A: { nombre:'Agro y Producción', color:'#5a9e3e',
+         lema:'Te atrae el campo, la producción y el vínculo con la naturaleza.',
+         msg:'El Nordeste es tierra productiva. Tus respuestas muestran afinidad con el trabajo agropecuario, la producción y el cuidado de los recursos naturales. Es un camino con fuerte anclaje regional y muchas posibilidades de desarrollo.' },
+    S: { nombre:'Ciencias de la Salud', color:'#e5577e',
+         lema:'Te mueven la ciencia, el cuerpo y el cuidado de las personas (o de los animales).',
+         msg:'Es un camino exigente, pero con un impacto muy directo en la vida de los demás. Tus respuestas muestran curiosidad científica y vocación de servicio: en unos años podrías estar cuidando, diagnosticando o investigando para mejorar la salud de tu comunidad.' },
+    N: { nombre:'Economía, Negocios y Gestión', color:'#2fb585',
+         lema:'Ves oportunidades donde otros ven números, y sabés organizar para que las cosas pasen.',
+         msg:'Los emprendimientos, el campo, el turismo y las empresas de la región necesitan gente con visión y criterio. Tus respuestas muestran perfil de gestión: podrías dirigir tu propio proyecto o asesorar a quienes hacen crecer la economía local.' },
+    D: { nombre:'Diseño y Creatividad', color:'#a35cf0',
+         lema:'Imaginás, dibujás y diseñás: tu creatividad es tu mejor herramienta.',
+         msg:'Diseñar espacios, marcas, objetos o contenidos es dar forma al mundo en el que vivimos. Tus respuestas combinan creatividad con técnica: podrías proyectar una ciudad, crear la identidad de una marca o inventar productos que usen miles de personas.' },
+    H: { nombre:'Educación, Arte, Cultura y Humanidades', color:'#3aa6c9',
+         lema:'Te importan las personas, el conocimiento, la cultura y la identidad de tu comunidad.',
+         msg:'Educar, crear, investigar y gestionar cultura transforma sociedades enteras. Tus respuestas muestran un perfil de quien inspira, comunica y conecta: podrías estar enseñando, produciendo arte, investigando o liderando proyectos culturales y educativos.' },
+    X: { nombre:'Ciencias Exactas e Investigación', color:'#6b7a99',
+         lema:'Te atrae entender cómo funciona el mundo desde la lógica, la experimentación y el rigor científico.',
+         msg:'La ciencia necesita mentes curiosas y rigurosas. Tus respuestas muestran gusto por el razonamiento abstracto, el laboratorio o la investigación: podrías estar descubriendo, modelando o enseñando los fundamentos de la naturaleza y la matemática.' },
+    J: { nombre:'Derecho, Justicia y Seguridad', color:'#6c5ce7',
+         lema:'Buscás la verdad, argumentás con convicción y te importa lo justo.',
+         msg:'La justicia y la seguridad necesitan profesionales éticos, rigurosos y comprometidos. Tus respuestas muestran pensamiento crítico y sentido de justicia: podrías estar defendiendo derechos, mediando en conflictos o aportando pruebas científicas que marquen la diferencia.' }
+  };
+  var ORDEN = ['T','I','A','S','N','D','H','X','J'];
+
+  /* =====================================================================
+     AFIRMACIONES
+     Formato: [sección, texto, pesos]
+     pesos: "ID#" = carrera + peso (1-3)  |  "P:X#" = perfil completo + peso
+     ===================================================================== */
+  var SECCIONES = [
+    'Tecnología e ingeniería',
+    'Ciencias, salud y naturaleza',
+    'Diseño, arte y cultura',
+    'Sociedad, justicia y negocios',
+    'Tu vida dentro de 10 años'
+  ];
+
+  var ITEMS = [
+    // —— 0. Tecnología e ingeniería ——
+    [0, '¿Cuánto te atrae programar, es decir, escribir código para crear aplicaciones, sitios web o sistemas?', 'SI3 PR3 PRD3 APU3 LS3 P:T2'],
+    [0, '¿Cuánto te interesa analizar datos y resolver problemas con matemática, lógica y algoritmos?', 'LS2 SI2 MAT3 PR2 APU2 P:T2 P:X2'],
+    [0, '¿Cuánto te gusta armar, reparar o programar dispositivos electrónicos, sensores y robots?', 'MC3 TMC3 ELN3 EM2 P:I2'],
+    [0, '¿Cuánto te interesa trabajar con instalaciones eléctricas, motores, máquinas y sistemas de energía?', 'ELE3 EM3 EMU3 RED3 MEC2 P:I2'],
+    [0, '¿Cuánto te atrae diseñar procesos industriales que transformen materias primas en productos?', 'QU3 IND2 EM2 P:I2'],
+    [0, '¿Cuánto te atrae calcular y dirigir la construcción de puentes, rutas, edificios o represas?', 'CIV3 AR2 AGR1 P:I2'],
+    [0, '¿Cuánto te interesa medir el territorio, hacer mapas o trabajar con sistemas de información geográfica?', 'AGR3 LG2 PG1 P:I1'],
+    [0, '¿Cuánto te importa que las obras y las industrias cuiden el ambiente y sean sustentables?', 'QU2 CIV2 AGN2 TU1 AR1 P:A1'],
+
+    // —— 1. Ciencias, salud y naturaleza ——
+    [1, '¿Cuánto te gusta trabajar en un laboratorio con reactivos, microscopios y experimentos?', 'BQ3 QUI3 BIO2 FIS2 QU2 CR1 P:X2 P:S1'],
+    [1, '¿Cuánto te interesa entender cómo funciona el cuerpo humano y cómo se tratan las enfermedades?', 'MD3 ENF2 KIN2 BQ2 ODO1 P:S3'],
+    [1, '¿Cuánto te atrae atender y cuidar personas con problemas de salud, aunque implique mucha responsabilidad?', 'MD3 ENF3 KIN2 ODO2 P:S3'],
+    [1, '¿Cuánto te atrae el cuidado y la salud de los animales?', 'VET3 API1 P:S2 P:A1'],
+    [1, '¿Cuánto te interesa la producción agropecuaria, el campo y el trabajo con la tierra o los animales de producción?', 'AGN3 ARU3 API2 MECAG2 AGA2 P:A3'],
+    [1, '¿Cuánto te atrae investigar y generar conocimiento científico nuevo?', 'MAT2 FIS3 QUI3 BIO3 LS2 BQ2 P:X3'],
+    [1, '¿Cuánto te interesa la conservación de la naturaleza, la ecología y el ambiente?', 'BIO3 AGN2 LG2 P:X1 P:A1'],
+
+    // —— 2. Diseño, arte y cultura ——
+    [2, '¿Cuánto te gusta imaginar y diseñar espacios, edificios o ciudades?', 'AR3 CIV1 DI1 P:D3'],
+    [2, '¿Cuánto te gusta dibujar, crear identidades visuales, afiches o interfaces digitales?', 'DG3 AV2 DI1 AC1 P:D3'],
+    [2, '¿Cuánto te interesa diseñar objetos y productos pensando en los materiales, la comodidad y cómo se fabrican?', 'DI3 MEC1 EM1 AR1 P:D2'],
+    [2, '¿Cuánto te atrae crear o producir arte, cine, teatro, música o contenidos audiovisuales?', 'AC3 AV3 DG2 GC1 P:H2 P:D1'],
+    [2, '¿Cuánto te interesa organizar eventos, museos o proyectos que cuiden y difundan la cultura de tu región?', 'GC3 TG3 AC1 TU1 P:H2'],
+    [2, '¿Cuánto te gusta escribir, leer con mirada crítica o trabajar con el lenguaje y la literatura?', 'LL3 PL3 CS2 PEJ2 P:H2'],
+
+    // —— 3. Sociedad, justicia y negocios ——
+    [3, '¿Cuánto te gusta enseñar, acompañar a otras personas en su aprendizaje y pensar cómo mejorar la educación?', 'ED3 PE3 EI3 LE2 PM2 PFI2 P:H3'],
+    [3, '¿Cuánto te atrae planificar viajes, hoteles o destinos turísticos, y recibir gente de otros lugares?', 'TU3 TT3 GC1 AD1 P:N2'],
+    [3, '¿Cuánto te gusta debatir, argumentar y defender una postura con fundamentos?', 'AB3 CR1 EC1 LF1 P:J2'],
+    [3, '¿Cuánto te interesa estudiar las leyes y cómo se aplican para resolver conflictos entre las personas?', 'AB3 CR2 RL1 P:J3'],
+    [3, '¿Cuánto te atrae usar la ciencia para analizar evidencias: huellas, documentos, pruebas forenses?', 'CR3 BQ2 QUI1 AB1 P:J2'],
+    [3, '¿Cuánto te gusta trabajar con números: cuentas, costos, impuestos y balances de una empresa?', 'CP3 EC2 AD2 P:N3'],
+    [3, '¿Cuánto te atrae tener tu propio emprendimiento y tomar decisiones económicas o de gestión?', 'AD3 CP2 TU2 ARU2 DG1 P:N3'],
+    [3, '¿Cuánto te interesa gestionar personas, negociar y resolver conflictos laborales?', 'RL3 ARL3 AD1 AB1 P:N2'],
+    [3, '¿Cuánto te interesa el comercio exterior, la logística o conectar la región con otros mercados?', 'CE3 LOG2 AD1 P:N2'],
+
+    // —— 4. Tu vida dentro de 10 años ——
+    [4, 'Dentro de 10 años, ¿qué tan importante es para vos poder trabajar a distancia para empresas de cualquier lugar?', 'SI2 PR2 PRD3 LS2 DG2 CS1 P:T2'],
+    [4, '¿Qué tan importante es para vos pasar gran parte de tus días al aire libre, en obras, plantas, el campo o el territorio?', 'CIV2 AGN3 ARU2 EM1 QU1 AR1 AGR2 P:A2 P:I1'],
+    [4, '¿Qué tan importante es para vos trabajar en el sector público (hospitales, escuelas, juzgados, organismos del Estado)?', 'AB2 ED2 CR2 MD2 ENF1 GC1 P:J1 P:H1 P:S1'],
+    [4, '¿Qué tan importante es para vos empezar a trabajar relativamente pronto, con una carrera de 2 o 3 años?', 'PR3 PRD3 TMC3 TT2 TG2 APU2 LOG2 RED2 P:T1']
+  ];
+
+  var ESCALA = [
+    { v:1, t:'Nada' },
+    { v:2, t:'Poco' },
+    { v:3, t:'Más o menos' },
+    { v:4, t:'Bastante' },
+    { v:5, t:'Mucho' }
+  ];
+
+  // Preprocesar preguntas
+  var PREGUNTAS = ITEMS.map(function (it) {
+    var w = [];
+    it[2].split(/\s+/).forEach(function (tok) {
+      if (tok.indexOf('P:') === 0) {
+        // Peso de perfil: P:T2 → perfil T con peso 2
+        w.push({ tipo:'perfil', id: tok.slice(2, 3), p: parseInt(tok.slice(3), 10) });
+      } else {
+        // Peso de carrera: SI3 → id SI peso 3
+        var m = tok.match(/^([A-Z]+)(\d+)$/);
+        if (m) w.push({ tipo:'carrera', id: m[1], p: parseInt(m[2], 10) });
+      }
+    });
+    return { s: it[0], q: it[1], w: w };
+  });
+
+  /* ---------- ESTADO ---------- */
+  var tarjeta = document.getElementById('tarjeta');
+  var topbar = document.getElementById('topbar');
+  var barra = document.getElementById('barra');
+  var barraRelleno = document.getElementById('barraRelleno');
+  var progTexto = document.getElementById('progTexto');
+  var progPct = document.getElementById('progPct');
+  var respuestas = [];
+  var actual = 0;
+  var bloqueado = false;
+  var enPregunta = false;
+
+  function cambiarPantalla(render, atras) {
+    var previa = tarjeta.firstElementChild;
+    if (previa) previa.classList.add('saliendo');
+    setTimeout(function () {
+      tarjeta.innerHTML = '';
+      render();
+      var p = tarjeta.firstElementChild;
+      if (p && atras) p.classList.add('atras');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      bloqueado = false;
+    }, previa ? 180 : 0);
+  }
+
+  function actualizarProgreso(n) {
+    var total = PREGUNTAS.length;
+    var pct = Math.round((n / total) * 100);
+    barraRelleno.style.width = pct + '%';
+    barra.setAttribute('aria-valuenow', pct);
+    progTexto.textContent = n < total ? 'Afirmación ' + (n + 1) + ' de ' + total : 'Listo';
+    progPct.textContent = pct + '%';
+  }
+
+  /* ---------- BIENVENIDA ---------- */
+  function mostrarBienvenida() {
+    enPregunta = false;
+    topbar.classList.remove('visible');
+    var d = document.createElement('div');
+    d.className = 'pantalla bienvenida';
+    d.innerHTML =
+      '<h1>Test vocacional: ¿qué carrera encaja con vos?</h1>' +
+      '<p>Vas a ver una serie de actividades y situaciones. Para cada una, indicá del 1 al 5 cuánto te atrae o te interesa. Al final te mostramos qué carreras de la <strong>UNNE</strong> y la <strong>UTN Resistencia</strong> se parecen más a tus respuestas.</p>' +
+      '<div class="como"><strong>Para que el resultado sea más preciso:</strong><ul>' +
+        '<li>No hay respuestas correctas ni incorrectas.</li>' +
+        '<li>Pensá en lo que te gustaría hacer dentro de 5 o 10 años, no solo en lo que sabés hacer hoy.</li>' +
+        '<li>Usá toda la escala: si todo es "Mucho", el test no puede distinguir.</li>' +
+      '</ul></div>' +
+      '<div class="chips"><span class="chip">' + PREGUNTAS.length + ' afirmaciones</span><span class="chip">Unos 5 minutos</span><span class="chip">' + CARRERAS.length + ' carreras de la zona</span></div>' +
+      '<button class="btn" id="btnInicio">Empezar el test</button>' +
+      '<p class="autor">Desarrollado por Dureco Ingenieria · Carreras UNNE y UTN FRRE · Uso educativo gratuito · Prohibida su comercialización sin autorización</p>';
+    tarjeta.appendChild(d);
+    document.getElementById('btnInicio').addEventListener('click', iniciar);
+  }
+
+  function iniciar() {
+    if (bloqueado) return;
+    bloqueado = true;
+    respuestas = [];
+    actual = 0;
+    topbar.classList.add('visible');
+    actualizarProgreso(0);
+    cambiarPantalla(mostrarPregunta, false);
+  }
+
+  /* ---------- PREGUNTAS ---------- */
+  function mostrarPregunta() {
+    enPregunta = true;
+    var p = PREGUNTAS[actual];
+    var d = document.createElement('div');
+    d.className = 'pantalla';
+    var html = '<span class="seccion">' + SECCIONES[p.s] + '</span><h2>' + p.q + '</h2>' +
+               '<div class="escala" role="radiogroup" aria-label="Escala de 1 a 5">';
+    ESCALA.forEach(function (n) {
+      html += '<button type="button" class="nivel' + (respuestas[actual] === n.v ? ' elegida' : '') + '" data-v="' + n.v + '" role="radio" aria-checked="' + (respuestas[actual] === n.v) + '">' +
+              '<span class="num">' + n.v + '</span><span class="etq">' + n.t + '</span></button>';
+    });
+    html += '</div><div class="nav-pregunta"><button type="button" class="volver" id="btnVolver"' + (actual === 0 ? ' disabled' : '') + '>Anterior</button>' +
+            '<span class="ayuda-teclas">Podés usar las teclas 1 a 5</span></div>';
+    d.innerHTML = html;
+    tarjeta.appendChild(d);
+
+    var botones = d.querySelectorAll('.nivel');
+    for (var k = 0; k < botones.length; k++) {
+      botones[k].addEventListener('click', function (e) {
+        responder(parseInt(e.currentTarget.getAttribute('data-v'), 10), e.currentTarget);
+      });
+    }
+    document.getElementById('btnVolver').addEventListener('click', volver);
+  }
+
+  function responder(v, btn) {
+    if (bloqueado) return;
+    bloqueado = true;
+    respuestas[actual] = v;
+    if (btn) btn.classList.add('elegida');
+    actual++;
+    actualizarProgreso(actual);
+    setTimeout(function () {
+      if (actual < PREGUNTAS.length) {
+        cambiarPantalla(mostrarPregunta, false);
+      } else {
+        enPregunta = false;
+        cambiarPantalla(mostrarResultado, false);
+      }
+    }, 220);
+  }
+
+  function volver() {
+    if (bloqueado || actual === 0) return;
+    bloqueado = true;
+    actual--;
+    actualizarProgreso(actual);
+    cambiarPantalla(mostrarPregunta, true);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (!enPregunta || bloqueado) return;
+    if (e.key >= '1' && e.key <= '5') {
+      var btn = tarjeta.querySelector('.nivel[data-v="' + e.key + '"]');
+      responder(parseInt(e.key, 10), btn);
+    } else if (e.key === 'ArrowLeft') {
+      volver();
+    }
+  });
+
+  /* ---------- CÁLCULO ---------- */
+  function calcular() {
+    // Puntaje por carrera y por perfil
+    var scCarrera = {}, mxCarrera = {};
+    var scPerfil = {}, mxPerfil = {};
+    CARRERAS.forEach(function (c) { scCarrera[c.id] = 0; mxCarrera[c.id] = 0; });
+    ORDEN.forEach(function (k) { scPerfil[k] = 0; mxPerfil[k] = 0; });
+
+    PREGUNTAS.forEach(function (q, i) {
+      var v = respuestas[i]; // 1..5
+      var puntos = (v - 1);  // 0..4
+      q.w.forEach(function (par) {
+        if (par.tipo === 'carrera') {
+          if (scCarrera[par.id] !== undefined) {
+            scCarrera[par.id] += puntos * par.p;
+            mxCarrera[par.id] += 4 * par.p;
+          }
+        } else if (par.tipo === 'perfil') {
+          scPerfil[par.id] += puntos * par.p;
+          mxPerfil[par.id] += 4 * par.p;
+        }
+      });
+    });
+
+    // Bonus de perfil a las carreras de ese perfil
+    CARRERAS.forEach(function (c) {
+      if (mxPerfil[c.c] > 0) {
+        var bonus = (scPerfil[c.c] / mxPerfil[c.c]) * 12; // hasta 12 puntos extra
+        scCarrera[c.id] += bonus;
+        mxCarrera[c.id] += 12;
+      }
+    });
+
+    var lista = CARRERAS.map(function (c) {
+      var pct = mxCarrera[c.id] ? Math.round(100 * scCarrera[c.id] / mxCarrera[c.id]) : 0;
+      return { c: c, pct: pct };
+    });
+    lista.sort(function (a, b) { return b.pct - a.pct || a.c.n.localeCompare(b.c.n); });
+
+    // Ranking de perfiles
+    var perfilPct = {};
+    ORDEN.forEach(function (k) {
+      // Promedio de las 3 mejores carreras del perfil + score directo del perfil
+      var pcts = lista.filter(function (x) { return x.c.c === k; }).map(function (x) { return x.pct; });
+      var top3 = pcts.slice(0, 3);
+      var avgTop = top3.length ? top3.reduce(function (a, b) { return a + b; }, 0) / top3.length : 0;
+      var directo = mxPerfil[k] ? (100 * scPerfil[k] / mxPerfil[k]) : 0;
+      perfilPct[k] = Math.round(avgTop * 0.65 + directo * 0.35);
+    });
+    var ranking = ORDEN.slice().sort(function (a, b) {
+      return perfilPct[b] - perfilPct[a] || ORDEN.indexOf(a) - ORDEN.indexOf(b);
+    });
+
+    return { lista: lista, perfil: perfilPct, ranking: ranking };
+  }
+
+  function tarjetaCarrera(x, color, otra, delay) {
+    var c = x.c;
+    return '<article class="carrera' + (otra ? ' otra' : '') + '" style="animation-delay:' + delay + 's">' +
+      '<h4>' + c.n + '</h4>' +
+      '<div class="etiquetas"><span class="etq-tag uni">' + c.u + '</span><span class="etq-tag dur">' + c.y + '</span><span class="etq-tag">' + c.t + '</span></div>' +
+      '<div class="afin-fila"><span>Afinidad con tus respuestas</span><span>' + x.pct + '%</span></div>' +
+      '<div class="afin-barra"><div data-w="' + x.pct + '" style="background:' + color + '"></div></div>' +
+      '<p>' + c.p + '</p>' +
+      '<details><summary>Ver más detalles</summary><p><strong>Facultad:</strong> ' + c.f + '.<br><strong>Sede:</strong> ' + c.sede + '.<br><strong>Qué se estudia:</strong> ' + c.e + '</p></details>' +
+      '</article>';
+  }
+
+  /* ---------- RESULTADO ---------- */
+  function mostrarResultado() {
+    enPregunta = false;
+    var r = calcular();
+    var top = r.ranking[0], seg = r.ranking[1];
+    var P = PERFILES[top], S = PERFILES[seg];
+
+    var delPerfil = r.lista.filter(function (x) { return x.c.c === top; }).slice(0, 5);
+    var otras = r.lista.filter(function (x) { return x.c.c !== top; }).slice(0, 4);
+
+    var maxPct = r.lista[0].pct;
+    var minRelevante = r.lista[Math.min(15, r.lista.length - 1)].pct;
+
+    var d = document.createElement('div');
+    d.className = 'pantalla';
+    d.style.setProperty('--acento', P.color);
+
+    var html =
+      '<div class="resultado-cabecera">' +
+        '<div class="etiqueta">Tu perfil sugerido</div>' +
+        '<h2>' + P.nombre + '</h2>' +
+        '<p class="lema">' + P.lema + '</p>' +
+        '<p class="mensaje">' + P.msg + '</p>' +
+      '</div>';
+
+    if (maxPct - minRelevante < 18) {
+      html += '<div class="nota">Tus respuestas fueron bastante parejas. El resultado es orientativo. Si querés más precisión, repetí el test usando más los extremos de la escala (1 y 5).</div>';
+    }
+
+    html += '<h3>Carreras recomendadas para tu perfil</h3><p class="sub">Ordenadas de mayor a menor afinidad con lo que respondiste.</p><div class="carreras">';
+    delPerfil.forEach(function (x, i) { html += tarjetaCarrera(x, P.color, false, i * 0.08); });
+    html += '</div>';
+
+    html += '<h3>Otras carreras que también encajan con vos</h3><p class="sub">Aunque pertenecen a otros perfiles, tus respuestas muestran afinidad con ellas.</p><div class="carreras">';
+    otras.forEach(function (x, i) { html += tarjetaCarrera(x, '#4f8cff', true, i * 0.08); });
+    html += '</div>';
+
+    var segCarreras = r.lista.filter(function (x) { return x.c.c === seg; }).slice(0, 4).map(function (x) { return x.c.n; });
+    html += '<div class="segunda"><strong>Segundo perfil más cercano:</strong> ' + S.nombre + '. Mirá también: ' + segCarreras.join(', ') + '.</div>';
+
+    html += '<h3>Ranking completo</h3><details><summary>Ver la afinidad con las ' + CARRERAS.length + ' carreras</summary><div class="ranking">';
+    r.lista.forEach(function (x) {
+      var col = PERFILES[x.c.c] ? PERFILES[x.c.c].color : '#888';
+      html += '<div><div class="fila-nombre"><span>' + x.c.n + ' <small>(' + x.c.u + ')</small></span><span>' + x.pct + '%</span></div>' +
+              '<div class="afin-barra"><div data-w="' + x.pct + '" style="background:' + col + '"></div></div></div>';
+    });
+    html += '</div></details>';
+
+    html +=
+      '<div class="acciones">' +
+        '<button type="button" class="btn" id="btnCompartir">Compartir resultado</button>' +
+        '<button type="button" class="btn secundario" id="btnRepetir">Repetir el test</button>' +
+      '</div>' +
+      '<p class="aviso">Este test es una guía orientativa, no un diagnóstico. Antes de decidir, explorá también otras carreras, hablá con estudiantes y profesionales y visitá las facultades. La decisión final es tuya.</p>' +
+      '<p class="autor">Desarrollado por Dureco Ingenieria · Carreras UNNE y UTN FRRE · Uso educativo gratuito · Prohibida su comercialización sin autorización</p>';
+
+    d.innerHTML = html;
+    tarjeta.appendChild(d);
+
+    setTimeout(function () {
+      var bs = d.querySelectorAll('.afin-barra > div');
+      for (var i = 0; i < bs.length; i++) bs[i].style.width = bs[i].getAttribute('data-w') + '%';
+    }, 150);
+
+    var det = d.querySelectorAll('details');
+    for (var j = 0; j < det.length; j++) {
+      det[j].addEventListener('toggle', function (ev) {
+        var bs2 = ev.currentTarget.querySelectorAll('.afin-barra > div');
+        for (var k = 0; k < bs2.length; k++) bs2[k].style.width = bs2[k].getAttribute('data-w') + '%';
+      });
+    }
+
+    document.getElementById('btnRepetir').addEventListener('click', function () {
+      if (bloqueado) return;
+      bloqueado = true;
+      cambiarPantalla(mostrarBienvenida, true);
+    });
+    document.getElementById('btnCompartir').addEventListener('click', function () {
+      var texto = 'Hice el test vocacional (UNNE / UTN FRRe). Mi perfil sugerido es "' + P.nombre + '". Carreras con más afinidad: ' +
+                  r.lista.slice(0, 3).map(function (x) { return x.c.n + ' (' + x.pct + '%)'; }).join(', ') + '.';
+      if (navigator.share) {
+        navigator.share({ title: 'Mi resultado vocacional', text: texto }).catch(function () {});
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () { alert('Resultado copiado. Ya podés pegarlo donde quieras.'); },
+                                                  function () { window.prompt('Copiá tu resultado:', texto); });
+      } else {
+        window.prompt('Copiá tu resultado:', texto);
+      }
+    });
+  }
+
+  mostrarBienvenida();
+})();
+</script>
+</body>
+</html>
