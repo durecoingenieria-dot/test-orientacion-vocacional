@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#6c5ce7">
-<title>Test vocacional · Carreras UNNE y UTN FRRE</title>
+<title>Test vocacional · Carreras UNNE y UTN FRRe</title>
 <style>
   :root {
     --violeta: #7c6cf0;
@@ -31,11 +31,12 @@
     display: flex;
     justify-content: center;
   }
-  .app { width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 16px; }
+  .app { width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 16px; }
 
+  /* Progreso */
   .topbar { display: none; }
   .topbar.visible { display: block; }
-  .progreso-info { display: flex; justify-content: space-between; font-size: .85rem; color: var(--texto-suave); margin-bottom: 8px; font-weight: 600; }
+  .progreso-info { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; color: var(--texto-suave); margin-bottom: 8px; font-weight: 600; }
   .barra { height: 10px; background: rgba(124,108,240,.15); border-radius: 99px; overflow: hidden; }
   .barra > div {
     height: 100%; width: 0%;
@@ -44,6 +45,7 @@
     transition: width .4s cubic-bezier(.4,0,.2,1);
   }
 
+  /* Tarjeta */
   .tarjeta {
     background: var(--tarjeta);
     border-radius: var(--radio);
@@ -58,12 +60,14 @@
   @keyframes entrarAtras { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
   @keyframes salir { to { opacity: 0; transform: translateX(-18px); } }
 
+  /* Bienvenida */
   .bienvenida { text-align: center; padding: 8px 0; }
   h1 { font-size: clamp(1.6rem, 5.5vw, 2.2rem); line-height: 1.2; margin: 4px 0 12px; color: var(--violeta-oscuro); }
-  .bienvenida p { color: var(--texto-suave); font-size: 1.05rem; max-width: 540px; margin: 0 auto 14px; }
-  .como { text-align: left; background: #f6f4ff; border-radius: 14px; padding: 14px 18px; max-width: 540px; margin: 0 auto 18px; font-size: .95rem; color: var(--texto); }
+  .bienvenida p { color: var(--texto-suave); font-size: 1.05rem; max-width: 560px; margin: 0 auto 14px; }
+  .como { text-align: left; background: #f6f4ff; border-radius: 14px; padding: 14px 18px; max-width: 560px; margin: 0 auto 18px; font-size: .95rem; color: var(--texto); }
   .como strong { color: var(--violeta-oscuro); }
-  .como ul { margin: 6px 0 0 18px; }
+  .como ul, .como ol { margin: 6px 0 0 20px; }
+  .como li { margin-bottom: 3px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 22px; }
   .chip { background: #f3f1ff; color: var(--violeta-oscuro); border-radius: 99px; padding: 6px 14px; font-size: .85rem; font-weight: 600; }
 
@@ -74,15 +78,17 @@
     color: #fff;
     background: linear-gradient(135deg, var(--violeta), var(--azul));
     box-shadow: 0 8px 20px rgba(91,75,214,.3);
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
   }
   .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(91,75,214,.35); }
   .btn:active { transform: translateY(0); }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
   .btn.secundario { background: #fff; color: var(--violeta-oscuro); border: 2px solid var(--borde); box-shadow: none; }
   .btn.secundario:hover { border-color: var(--violeta); }
-  .btn:focus-visible, .nivel:focus-visible, summary:focus-visible, .volver:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+  .btn:focus-visible, .nivel:focus-visible, summary:focus-visible, .volver:focus-visible, .filtro:focus-visible, .area-op:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
 
-  .seccion { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--violeta-oscuro); background: #f0edff; padding: 4px 12px; border-radius: 99px; margin-bottom: 14px; }
+  /* Pregunta con escala */
+  .seccion { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--violeta-oscuro); background: #f0edff; padding: 4px 12px; border-radius: 99px; margin-bottom: 14px; }
   h2 { font-size: clamp(1.2rem, 4.6vw, 1.55rem); line-height: 1.35; margin-bottom: 22px; font-weight: 650; }
   .escala { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .nivel {
@@ -104,42 +110,74 @@
   .ayuda-teclas { font-size: .78rem; color: var(--texto-suave); display: none; }
   @media (hover: hover) and (pointer: fine) { .ayuda-teclas { display: block; } }
 
+  /* Pantalla de áreas (transición) */
+  .area-lista { display: grid; gap: 10px; margin: 6px 0 18px; }
+  .area-fija, .area-op {
+    text-align: left; width: 100%; font: inherit; color: inherit;
+    border: 2px solid var(--borde); border-radius: 14px; background: #faf9ff; padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .area-fija { border-left: 6px solid var(--verde); }
+  .area-fija .rot { font-size: .75rem; font-weight: 700; color: #1d8a63; background: #e4f8ef; padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+  .area-op { cursor: pointer; transition: border-color .15s ease, background .15s ease; }
+  .area-op:hover { border-color: var(--violeta); }
+  .area-op.sel { border-color: var(--violeta-oscuro); background: #efecff; }
+  .area-op .tilde { font-size: .75rem; font-weight: 700; color: var(--texto-suave); white-space: nowrap; }
+  .area-op.sel .tilde { color: var(--violeta-oscuro); }
+  .aviso-empate { background: #fff7e6; border: 1px solid #ffe1a8; color: #7a5a12; border-radius: 12px; padding: 12px 14px; font-size: .92rem; margin: 6px 0 12px; }
+  .pantalla-areas p.sub { margin-bottom: 14px; }
+
+  /* Resultado */
   .resultado-cabecera { text-align: center; padding: 6px 0 18px; }
   .resultado-cabecera .etiqueta { font-size: .82rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--texto-suave); }
-  .resultado-cabecera h2 { margin: 8px 0; font-size: clamp(1.5rem, 6vw, 2rem); color: var(--acento, var(--violeta-oscuro)); }
+  .resultado-cabecera h2 { margin: 8px 0; font-size: clamp(1.5rem, 6vw, 2rem); color: var(--violeta-oscuro); }
   .resultado-cabecera .lema { font-weight: 600; margin-bottom: 10px; }
-  .resultado-cabecera .mensaje { color: var(--texto-suave); max-width: 580px; margin: 0 auto; }
+  .resultado-cabecera .mensaje { color: var(--texto-suave); max-width: 600px; margin: 0 auto; }
   h3 { font-size: 1.12rem; margin: 26px 0 6px; }
   .sub { font-size: .9rem; color: var(--texto-suave); margin-bottom: 12px; }
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px; }
+  .filtro { appearance: none; cursor: pointer; font: inherit; font-size: .85rem; font-weight: 700; padding: 8px 14px; border-radius: 99px; border: 2px solid var(--borde); background: #fff; color: var(--texto-suave); transition: all .15s ease; }
+  .filtro:hover { border-color: var(--violeta); color: var(--violeta-oscuro); }
+  .filtro.activo { background: var(--violeta-oscuro); border-color: var(--violeta-oscuro); color: #fff; }
   .carreras { display: grid; gap: 12px; }
   .carrera {
-    border: 2px solid var(--borde); border-left: 6px solid var(--acento, var(--violeta));
+    border: 2px solid var(--borde); border-left: 6px solid var(--violeta);
     border-radius: 16px; padding: 16px; background: #fff;
     animation: entrar .45s ease both;
   }
-  .carrera.otra { border-left-color: var(--azul); }
   .carrera h4 { font-size: 1.08rem; line-height: 1.3; margin-bottom: 6px; }
   .etiquetas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
   .etq-tag { font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: #f3f1ff; color: var(--violeta-oscuro); }
   .etq-tag.uni { background: #e7f0ff; color: #2d5fc4; }
   .etq-tag.dur { background: #e4f8ef; color: #1d8a63; }
-  .carrera p { font-size: .94rem; color: var(--texto-suave); }
+  .etq-tag.sede { background: #fff1e0; color: #a35a0a; }
+  .carrera p, .detalle p { font-size: .94rem; color: var(--texto-suave); }
   .afin-fila { display: flex; justify-content: space-between; font-size: .85rem; font-weight: 700; margin: 4px 0 4px; }
   .afin-barra { height: 10px; border-radius: 99px; background: #efecfb; overflow: hidden; margin-bottom: 10px; }
-  .afin-barra > div { height: 100%; width: 0; border-radius: 99px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  .afin-barra > div { height: 100%; width: 0; border-radius: 99px; transition: width 1s cubic-bezier(.4,0,.2,1); background: linear-gradient(90deg, var(--violeta), var(--azul)); }
   details { margin-top: 8px; }
   summary { cursor: pointer; font-weight: 700; font-size: .9rem; color: var(--violeta-oscuro); padding: 4px 0; border-radius: 6px; }
-  details p { margin-top: 6px; }
-  .ranking { display: grid; gap: 8px; margin-top: 12px; }
-  .ranking .fila-nombre { display: flex; justify-content: space-between; gap: 10px; font-size: .88rem; font-weight: 600; }
-  .ranking .fila-nombre span:last-child { white-space: nowrap; }
-  .ranking .afin-barra { margin-bottom: 0; height: 8px; }
-  .segunda { background: #f6f4ff; border-radius: 16px; padding: 14px 16px; margin-top: 18px; font-size: .95rem; }
-  .segunda strong { color: var(--violeta-oscuro); }
+  .detalle { margin-top: 6px; display: grid; gap: 8px; }
+  .detalle strong { color: var(--texto); }
+  .detalle a { color: var(--azul); word-break: break-all; }
+  .mini { border: 2px solid var(--borde); border-radius: 14px; padding: 10px 14px; background: #fff; margin-top: 0; }
+  .mini > summary { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; color: var(--texto); }
+  .mini .mini-nombre { font-size: .95rem; }
+  .mini .mini-nombre small { display: block; font-weight: 500; font-size: .78rem; color: var(--texto-suave); }
+  .mini .mini-pct { color: var(--violeta-oscuro); white-space: nowrap; }
+  .mini .afin-barra { margin-top: 10px; }
+  .vacio { font-size: .92rem; color: var(--texto-suave); background: #f6f4ff; border-radius: 12px; padding: 12px 14px; }
+  .areas-resumen { display: grid; gap: 8px; }
+  .areas-resumen .fila { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; font-weight: 600; }
+  .areas-resumen .afin-barra { margin-bottom: 4px; height: 8px; }
+  .catalogo { margin-top: 8px; }
+  .catalogo details { border: 2px solid var(--borde); border-radius: 14px; padding: 8px 14px; margin-bottom: 8px; }
+  .catalogo ul { list-style: none; margin: 8px 0 4px; display: grid; gap: 8px; }
+  .catalogo li { font-size: .9rem; }
+  .catalogo li small { display: block; color: var(--texto-suave); font-size: .78rem; }
   .nota { background: #fff7e6; border: 1px solid #ffe1a8; color: #7a5a12; border-radius: 12px; padding: 12px 14px; font-size: .9rem; margin-bottom: 14px; }
   .acciones { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 26px; }
   .aviso { font-size: .8rem; color: var(--texto-suave); text-align: center; margin-top: 18px; }
-  .autor { font-size: .75rem; color: var(--texto-suave); text-align: center; margin-top: 12px; opacity: .85; }
 
   @media (min-width: 600px) {
     .tarjeta { padding: 36px 40px; }
@@ -169,452 +207,18 @@
   'use strict';
 
   /* =====================================================================
-     BASE DE DATOS — 76 carreras UNNE + UTN FRRe
-     c = perfil primario
-     tags = áreas de interés (para scoring fino)
+     DATOS (generados desde base_carreras_UNNE_UTN_FRRe_completado.csv)
      ===================================================================== */
-  var CARRERAS = [
-    // —— DISEÑO Y CREATIVIDAD (D) ——
-    {id:'AR',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Arquitectura',y:'6 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de proyectar, dirigir y gestionar obras de arquitectura y urbanismo, con sensibilidad estética, conocimiento técnico y compromiso social y ambiental.',
-     e:'Diseño arquitectónico, historia, estructuras, construcción, urbanismo, instalaciones, representación gráfica y gestión de proyectos.',
-     tags:['diseño','espacio','construcción','creatividad','técnico']},
-    {id:'DG',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Diseño Gráfico',y:'4 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Diseñador capaz de conceptualizar y desarrollar soluciones de comunicación visual para distintos soportes y medios, con mirada crítica y sensibilidad estética.',
-     e:'Tipografía, composición, identidad visual, diseño editorial, packaging, diseño digital, ilustración y semiótica.',
-     tags:['diseño','visual','creatividad','digital','comunicación']},
-    {id:'DI',c:'D',u:'UNNE',f:'Facultad de Arquitectura y Urbanismo',n:'Licenciatura en Diseño Industrial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional que proyecta objetos y sistemas de uso cotidiano o industrial, integrando aspectos formales, funcionales, técnicos, ergonómicos y de mercado.',
-     e:'Diseño de productos, ergonomía, materiales, prototipado, procesos productivos y sustentabilidad.',
-     tags:['diseño','producto','creatividad','técnico','materiales']},
-    {id:'AV',c:'D',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Diseño de Imagen, Sonido y Multimedia',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capaz de producir y editar contenidos audiovisuales y multimedia para distintos medios y plataformas.',
-     e:'Producción audiovisual, diseño de sonido, edición de video, animación, multimedia y postproducción.',
-     tags:['audiovisual','digital','creatividad','sonido','medios']},
-
-    // —— ARTE, CULTURA Y EDUCACIÓN (H) ——
-    {id:'AC',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Artes Combinadas',y:'4 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Artista y gestor con formación integral en distintas disciplinas artísticas, capaz de producir, investigar y mediar entre el arte y la sociedad.',
-     e:'Artes visuales, música, teatro, danza, medios audiovisuales, historia del arte y gestión cultural.',
-     tags:['arte','cultura','creatividad','expresión','interdisciplina']},
-    {id:'GC',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Gestión y Desarrollo Cultural',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de diseñar, gestionar y evaluar políticas y proyectos culturales con mirada estratégica y territorial.',
-     e:'Políticas culturales, gestión de instituciones, economía de la cultura, planificación estratégica y desarrollo territorial.',
-     tags:['cultura','gestión','políticas','territorio','proyectos']},
-    {id:'TG',c:'H',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Gestión y Desarrollo Cultural',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capacitado para organizar, administrar y desarrollar proyectos y actividades culturales en distintos contextos.',
-     e:'Gestión cultural, producción de eventos, administración de proyectos y comunicación cultural.',
-     tags:['cultura','gestión','eventos','organización']},
-    {id:'ED',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Ciencias de la Educación',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de investigar, diseñar y gestionar políticas y proyectos educativos en distintos niveles del sistema.',
-     e:'Teorías educativas, política y gestión educativa, curriculum, evaluación e investigación.',
-     tags:['educación','pedagogía','gestión','investigación']},
-    {id:'PE',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Ciencias de la Educación',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente e investigador capacitado para enseñar y reflexionar sobre los procesos educativos en distintos niveles y contextos.',
-     e:'Pedagogía, didáctica, psicología educativa, política educativa y práctica docente.',
-     tags:['educación','docencia','pedagogía']},
-    {id:'EI',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Educación Inicial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente capacitado para educar y acompañar el desarrollo de niños y niñas en el nivel inicial.',
-     e:'Pedagogía de la primera infancia, didácticas específicas, juego y práctica docente.',
-     tags:['educación','infancia','docencia','cuidado']},
-    {id:'LE',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Educación Inicial',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de investigar, gestionar y diseñar propuestas educativas para la primera infancia.',
-     e:'Pedagogía de la primera infancia, políticas de educación inicial, investigación y gestión.',
-     tags:['educación','infancia','gestión','investigación']},
-    {id:'PF',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Filosofía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente capacitado para enseñar filosofía y promover el pensamiento crítico y reflexivo.',
-     e:'Historia de la filosofía, lógica, ética, filosofía de la ciencia y didáctica de la filosofía.',
-     tags:['filosofía','docencia','pensamiento','humanidades']},
-    {id:'LF',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Filosofía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Filósofo capaz de investigar, enseñar y aplicar el pensamiento filosófico a problemas contemporáneos.',
-     e:'Historia de la filosofía, metafísica, epistemología, ética y filosofía política.',
-     tags:['filosofía','investigación','humanidades','pensamiento']},
-    {id:'PG',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Geografía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente capacitado para enseñar geografía y promover la comprensión del territorio y las relaciones sociedad-naturaleza.',
-     e:'Geografía física y humana, cartografía, SIG y didáctica de la geografía.',
-     tags:['geografía','docencia','territorio','ambiente']},
-    {id:'LG',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Geografía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Geógrafo capaz de analizar, planificar y gestionar el territorio desde una perspectiva integral.',
-     e:'Geografía física, humana, económica, cartografía, SIG y ordenamiento territorial.',
-     tags:['geografía','territorio','ambiente','planificación']},
-    {id:'PH',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Historia',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente capacitado para enseñar historia y promover la comprensión crítica del pasado y su relación con el presente.',
-     e:'Historia argentina, americana y mundial, historiografía y didáctica de la historia.',
-     tags:['historia','docencia','humanidades']},
-    {id:'LH',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Historia',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Historiador capaz de investigar, interpretar y comunicar procesos históricos con rigor metodológico.',
-     e:'Historia argentina, americana y mundial, teoría y metodología de la historia.',
-     tags:['historia','investigación','humanidades','patrimonio']},
-    {id:'PL',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Profesorado en Letras',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Docente capacitado para enseñar lengua y literatura, y promover la lectura crítica y la expresión escrita.',
-     e:'Literatura argentina, latinoamericana y universal, lingüística y didáctica de la lengua y la literatura.',
-     tags:['literatura','docencia','lengua','escritura']},
-    {id:'LL',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Letras',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Licenciado en Letras capaz de investigar, criticar y producir conocimiento sobre la literatura y el lenguaje.',
-     e:'Literatura, lingüística, teoría literaria y crítica.',
-     tags:['literatura','investigación','lengua','escritura']},
-    {id:'CI',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Ciencias de la Información',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de gestionar, organizar y preservar información y documentos en archivos, bibliotecas y centros de documentación.',
-     e:'Organización del conocimiento, archivística, bibliotecología, preservación documental y sistemas de información.',
-     tags:['información','archivos','bibliotecas','organización']},
-    {id:'ARQ',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Archivista',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capacitado para organizar, describir y preservar documentos de archivo.',
-     e:'Organización de archivos, clasificación documental, preservación y descripción archivística.',
-     tags:['archivos','organización','patrimonio']},
-    {id:'BIB',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Bibliotecario',y:'3 años',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capacitado para gestionar servicios bibliotecarios y de información.',
-     e:'Catalogación, servicios de información, promoción de la lectura y gestión de colecciones.',
-     tags:['bibliotecas','información','organización','lectura']},
-    {id:'CS',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Licenciatura en Comunicación Social',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Comunicador capaz de producir, analizar y gestionar procesos de comunicación en medios, instituciones y organizaciones.',
-     e:'Teorías de la comunicación, periodismo, producción audiovisual, comunicación institucional y opinión pública.',
-     tags:['comunicación','medios','periodismo','escritura']},
-    {id:'PEJ',c:'H',u:'UNNE',f:'Facultad de Humanidades',n:'Tecnicatura en Periodismo',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Técnico capacitado para producir contenidos periodísticos en distintos soportes.',
-     e:'Periodismo gráfico, radial, televisivo y digital, técnicas de entrevista y redacción.',
-     tags:['periodismo','medios','escritura','comunicación']},
-    {id:'TE',c:'H',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ciclo de Licenciatura en Tecnología Educativa',y:'Por verificar',t:'Ciclo de complementación',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de diseñar, implementar y gestionar propuestas educativas mediadas por tecnología.',
-     e:'Integración de tecnologías en educación, materiales digitales, entornos virtuales y gestión de tecnología educativa.',
-     tags:['educación','tecnología','digital','diseño']},
-
-    // —— TURISMO Y SERVICIOS (N / mixto) ——
-    {id:'TU',c:'N',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Licenciatura en Turismo',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Profesional capaz de planificar, gestionar y desarrollar destinos y productos turísticos de manera sustentable e integral.',
-     e:'Planificación turística, gestión de destinos, marketing turístico, patrimonio y sustentabilidad.',
-     tags:['turismo','gestión','territorio','servicio','sustentabilidad']},
-    {id:'TT',c:'N',u:'UNNE',f:'Facultad de Artes, Diseño y Cs. de la Cultura',n:'Tecnicatura en Turismo',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Técnico capacitado para operar y asistir en la gestión de servicios y productos turísticos.',
-     e:'Gestión turística, hotelería, agencias de viajes, marketing turístico y servicio al cliente.',
-     tags:['turismo','servicio','hospitalidad','organización']},
-
-    // —— NEGOCIOS, ECONOMÍA Y GESTIÓN (N) ——
-    {id:'CP',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Contador Público',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capacitado para registrar, analizar e interpretar información económica y financiera, y asesorar en aspectos contables, impositivos y societarios.',
-     e:'Contabilidad, auditoría, costos, tributación, finanzas y derecho comercial.',
-     tags:['números','finanzas','normas','análisis','organización']},
-    {id:'AD',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Administración',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de gestionar organizaciones, tomar decisiones estratégicas y liderar equipos en distintos tipos de empresas e instituciones.',
-     e:'Administración, marketing, recursos humanos, finanzas, operaciones y estrategia empresarial.',
-     tags:['gestión','negocios','liderazgo','organización','estrategia']},
-    {id:'EC',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Economía',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Economista capaz de analizar y explicar fenómenos económicos, diseñar políticas y asesorar en decisiones económicas a nivel micro y macro.',
-     e:'Microeconomía, macroeconomía, econometría, finanzas públicas y políticas económicas.',
-     tags:['economía','análisis','datos','políticas','números']},
-    {id:'RL',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Relaciones Laborales',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Profesional capaz de gestionar integralmente las relaciones laborales y el capital humano en organizaciones, con mirada estratégica y jurídica.',
-     e:'Derecho del trabajo, negociación colectiva, gestión de RRHH, sociología del trabajo y políticas de empleo.',
-     tags:['rrhh','trabajo','negociación','gestión','personas']},
-    {id:'ARL',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Analista en Relaciones Laborales',y:'2 años y medio',t:'Grado',sede:'Corrientes Capital',
-     p:'Analista capacitado para intervenir en las relaciones entre empleadores y trabajadores, y en la gestión de personal.',
-     e:'Derecho laboral, negociación colectiva, administración de personal y conflictos laborales.',
-     tags:['rrhh','trabajo','mediación','organización']},
-    {id:'CE',c:'N',u:'UNNE',f:'Facultad de Ciencias Económicas',n:'Licenciatura en Comercio Exterior',y:'5 años',t:'Grado',sede:'Paso de los Libres, Corrientes',
-     p:'Profesional capacitado para gestionar operaciones de comercio exterior y desarrollar estrategias de inserción internacional de empresas.',
-     e:'Comercio internacional, logística internacional, aduanas, marketing internacional y contratos.',
-     tags:['comercio','internacional','logística','negocios','gestión']},
-    {id:'ARU',c:'N',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Licenciatura en Administración Rural',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Profesional capaz de administrar y gestionar empresas y establecimientos agropecuarios de manera eficiente.',
-     e:'Administración de empresas agropecuarias, economía agraria, comercialización y gestión de la producción.',
-     tags:['agro','gestión','negocios','campo','organización']},
-    {id:'LOG',c:'N',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Logística',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capaz de gestionar operaciones logísticas y de cadena de suministro en empresas.',
-     e:'Cadena de suministro, almacenamiento, transporte, distribución y comercio exterior básico.',
-     tags:['logística','organización','transporte','operaciones']},
-    {id:'AGA',c:'N',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Licenciatura en Administración y Gestión Agropecuaria',y:'1 año y un cuatrimestre',t:'Ciclo de complementación',sede:'Curuzú Cuatiá, Corrientes',
-     p:'Profesional capaz de gestionar integralmente empresas y establecimientos agropecuarios.',
-     e:'Administración, economía agraria, comercialización, finanzas y gestión de la producción.',
-     tags:['agro','gestión','campo','negocios']},
-    {id:'TAE',c:'N',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Tecnicatura en Administración de Empresas',y:'2 años y medio',t:'Pregrado',sede:'Curuzú Cuatiá, Corrientes',
-     p:'Técnico capacitado para apoyar la gestión administrativa y operativa de empresas, especialmente pymes.',
-     e:'Administración general, contabilidad básica, marketing, recursos humanos y gestión de pymes.',
-     tags:['gestión','organización','negocios','pymes']},
-
-    // —— TECNOLOGÍA Y COMPUTACIÓN (T) ——
-    {id:'SI',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería en Sistemas de Información',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de analizar, diseñar, desarrollar y gestionar sistemas de información y soluciones de software para organizaciones.',
-     e:'Análisis y diseño de sistemas, programación, bases de datos, ingeniería de software, redes y seguridad.',
-     tags:['programación','sistemas','software','datos','tecnología']},
-    {id:'LS',c:'T',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Sistemas de Información',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Profesional capaz de analizar, diseñar, implementar y gestionar sistemas de información en organizaciones.',
-     e:'Análisis y diseño de sistemas, bases de datos, ingeniería de software, redes y seguridad informática.',
-     tags:['programación','sistemas','software','datos','tecnología']},
-    {id:'PR',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Programación',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico programador capaz de desarrollar y mantener aplicaciones de software.',
-     e:'Lenguajes de programación, algoritmos, bases de datos, desarrollo web y fundamentos de software.',
-     tags:['programación','software','digital','lógica']},
-    {id:'PRD',c:'T',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Programación a Distancia',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico programador capaz de desarrollar aplicaciones de software, con formación adquirida en modalidad a distancia.',
-     e:'Programación, algoritmos, bases de datos y desarrollo de aplicaciones (modalidad a distancia).',
-     tags:['programación','software','digital','autonomía']},
-    {id:'APU',c:'T',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Analista Programador Universitario',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Analista programador capaz de diseñar, desarrollar y mantener aplicaciones de software.',
-     e:'Programación, algoritmos, estructuras de datos, bases de datos y desarrollo de software.',
-     tags:['programación','software','lógica','sistemas']},
-
-    // —— INGENIERÍA E INDUSTRIA (I) ——
-    {id:'QU',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería Química',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de diseñar, operar y optimizar procesos químicos e industriales de transformación de la materia.',
-     e:'Química, operaciones unitarias, reactores, control de procesos, termodinámica y diseño de plantas.',
-     tags:['procesos','química','industria','técnico','laboratorio']},
-    {id:'EM',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería Electromecánica',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero orientado al diseño, operación y mantenimiento de sistemas electromecánicos en entornos industriales.',
-     e:'Mecánica, electricidad, electrónica industrial, automatización, máquinas y mantenimiento.',
-     tags:['máquinas','electricidad','automatización','industria','técnico']},
-    {id:'EMU',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Electromecánica',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de diseñar, operar y mantener sistemas que integran componentes mecánicos y eléctricos en la industria.',
-     e:'Mecánica, electricidad, máquinas térmicas y eléctricas, automatización y mantenimiento industrial.',
-     tags:['máquinas','electricidad','automatización','industria','técnico']},
-    {id:'MC',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Ingeniería en Mecatrónica',y:'Por verificar',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de diseñar e integrar sistemas que combinan mecánica, electrónica y control (robótica, automatización avanzada).',
-     e:'Mecánica, electrónica, control automático, robótica, sistemas embebidos y diseño mecatrónico.',
-     tags:['robótica','automatización','electrónica','máquinas','innovación']},
-    {id:'TMC',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Mecatrónica',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capaz de instalar, operar y mantener sistemas mecatrónicos y de automatización.',
-     e:'Mecánica, electrónica, control, robótica básica y sistemas automatizados.',
-     tags:['robótica','automatización','electrónica','técnico']},
-    {id:'CIV',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Civil',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de proyectar, dirigir y gestionar obras de infraestructura civil (edificios, caminos, puentes, obras hidráulicas).',
-     e:'Estructuras, hidráulica, geotecnia, caminos, construcciones, materiales y gestión de obras.',
-     tags:['construcción','estructuras','obras','técnico','territorio']},
-    {id:'MEC',c:'I',u:'UNNE',f:'Facultad de Ingeniería',n:'Ingeniería Mecánica',y:'5 años',t:'Grado',sede:'Resistencia, Chaco',
-     p:'Ingeniero capaz de diseñar, fabricar y mantener máquinas y sistemas mecánicos.',
-     e:'Mecánica de sólidos y fluidos, diseño de máquinas, termodinámica, materiales y fabricación.',
-     tags:['máquinas','diseño','técnico','industria','materiales']},
-    {id:'ELE',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería Eléctrica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Ingeniero capaz de diseñar, proyectar y dirigir sistemas de generación, transmisión, distribución y utilización de la energía eléctrica.',
-     e:'Circuitos, máquinas eléctricas, generación y distribución de energía, electrónica de potencia e instalaciones.',
-     tags:['electricidad','energía','técnico','instalaciones']},
-    {id:'ELN',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería en Electrónica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Ingeniero capaz de diseñar, desarrollar y mantener sistemas electrónicos y de control para diversas aplicaciones.',
-     e:'Circuitos electrónicos, microprocesadores, comunicaciones, control automático e instrumentación.',
-     tags:['electrónica','control','tecnología','sistemas','innovación']},
-    {id:'AGR',c:'I',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Ingeniería en Agrimensura',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Ingeniero capacitado para medir, representar y gestionar el territorio y la propiedad inmueble con precisión técnica y jurídica.',
-     e:'Topografía, geodesia, cartografía, sistemas de información geográfica (SIG) y catastro.',
-     tags:['territorio','medición','técnico','mapas','precisión']},
-    {id:'IND',c:'I',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Ingeniería Industrial',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Ingeniero orientado a la mejora de procesos, la eficiencia y la gestión de sistemas productivos e industriales.',
-     e:'Procesos productivos, optimización, logística, calidad, gestión de operaciones e ingeniería de métodos.',
-     tags:['procesos','eficiencia','industria','organización','logística']},
-    {id:'RED',c:'I',u:'UTN FRRe',f:'Facultad Regional Resistencia',n:'Tecnicatura Universitaria en Operaciones y Mantenimiento de Redes Eléctricas',y:'Por verificar',t:'Pregrado',sede:'Resistencia, Chaco',
-     p:'Técnico capacitado para operar y mantener redes y sistemas de distribución eléctrica.',
-     e:'Redes de distribución eléctrica, operación, mantenimiento, seguridad eléctrica y sistemas de potencia.',
-     tags:['electricidad','redes','mantenimiento','técnico','energía']},
-
-    // —— AGRO Y PRODUCCIÓN (A — nuevo perfil o dentro de I/N) ——
-    {id:'AGN',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Ingeniería Agronómica',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Ingeniero capaz de planificar, dirigir y asesorar sistemas de producción agropecuaria de manera eficiente y sustentable.',
-     e:'Producción vegetal y animal, suelos, fitopatología, maquinaria agrícola, economía agraria y extensión rural.',
-     tags:['agro','campo','producción','naturaleza','técnico']},
-    {id:'API',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Tecnicatura Universitaria en Apicultura',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Técnico especializado en la producción apícola, capaz de manejar apiarios y desarrollar la cadena de valor de la miel y productos de la colmena.',
-     e:'Biología de la abeja, manejo de colmenas, sanidad apícola, producción de miel y comercialización.',
-     tags:['agro','campo','producción','naturaleza','abejas']},
-    {id:'MECAG',c:'A',u:'UNNE',f:'Facultad de Ciencias Agrarias',n:'Tecnicatura Universitaria en Mecanización Agraria',y:'3 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Técnico capaz de operar, mantener y asesorar sobre maquinaria y equipamiento agrícola.',
-     e:'Maquinaria agrícola, mantenimiento, operación de equipos, tecnología de precisión e hidráulica.',
-     tags:['agro','máquinas','campo','técnico','mantenimiento']},
-
-    // —— CIENCIAS EXACTAS E INVESTIGACIÓN (X) ——
-    {id:'MAT',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Matemática',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Matemático con sólida formación teórica y capacidad para aplicar el razonamiento abstracto a problemas científicos, tecnológicos o educativos.',
-     e:'Álgebra, análisis matemático, geometría, topología, probabilidad, estadística y matemática aplicada.',
-     tags:['matemática','lógica','análisis','investigación','abstracto']},
-    {id:'FIS',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Físicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Físico con formación sólida en los fundamentos de la física y capacidad para investigar, modelar y aplicar conocimientos a problemas científicos y tecnológicos.',
-     e:'Mecánica, electromagnetismo, termodinámica, física cuántica, óptica y física experimental.',
-     tags:['física','investigación','laboratorio','análisis','ciencia']},
-    {id:'QUI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Químicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Químico capaz de investigar, analizar y desarrollar sustancias y procesos químicos en ámbitos científicos e industriales.',
-     e:'Química general, orgánica, inorgánica, analítica, físico-química y bioquímica.',
-     tags:['química','laboratorio','investigación','análisis','ciencia']},
-    {id:'BIO',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Licenciatura en Ciencias Biológicas',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Biólogo con formación integral capaz de investigar, conservar y gestionar la biodiversidad y los sistemas biológicos.',
-     e:'Biología celular y molecular, genética, ecología, zoología, botánica, microbiología y conservación.',
-     tags:['biología','naturaleza','investigación','laboratorio','ambiente']},
-    {id:'PM',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Matemática',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Docente capacitado para enseñar matemática en el nivel secundario y superior, con sólida formación disciplinar y pedagógica.',
-     e:'Álgebra, análisis, geometría, probabilidad, pedagogía y didáctica de la matemática.',
-     tags:['matemática','docencia','lógica','educación']},
-    {id:'PFI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Física',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Docente capacitado para enseñar física en el nivel secundario y superior, integrando teoría, experimentación y didáctica.',
-     e:'Mecánica, electromagnetismo, termodinámica, física moderna, pedagogía y didáctica de la física.',
-     tags:['física','docencia','ciencia','educación']},
-    {id:'PQU',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Ciencias Químicas y del Ambiente',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Docente capacitado para enseñar química y temas ambientales en el nivel secundario, con mirada interdisciplinaria.',
-     e:'Química, ciencias ambientales, pedagogía y didáctica de las ciencias.',
-     tags:['química','ambiente','docencia','educación']},
-    {id:'PBI',c:'X',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Profesorado en Biología',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Docente capacitado para enseñar biología en el nivel secundario, integrando conocimientos científicos y estrategias didácticas.',
-     e:'Biología celular, molecular, ecología, biodiversidad, pedagogía y didáctica de la biología.',
-     tags:['biología','docencia','naturaleza','educación']},
-
-    // —— SALUD (S) ——
-    {id:'MD',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Medicina',y:'6 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Médico capaz de diagnosticar, tratar y prevenir enfermedades, y de ejercer la medicina con responsabilidad ética y social.',
-     e:'Ciencias básicas, clínicas (medicina interna, cirugía, pediatría, ginecología), salud pública e internado.',
-     tags:['salud','cuidado','personas','ciencia','clínica']},
-    {id:'ENF',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Licenciatura en Enfermería',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Licenciado en Enfermería capaz de brindar cuidados integrales de salud, gestionar servicios de enfermería y participar en equipos de salud.',
-     e:'Cuidados de enfermería, anatomía, fisiología, farmacología, salud pública y práctica clínica.',
-     tags:['salud','cuidado','personas','servicio']},
-    {id:'KIN',c:'S',u:'UNNE',f:'Facultad de Medicina',n:'Licenciatura en Kinesiología y Fisiatría',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Kinesiólogo capaz de evaluar, tratar y rehabilitar disfunciones del movimiento y del sistema musculoesquelético.',
-     e:'Anatomía, fisiología, biomecánica, técnicas kinesiológicas, rehabilitación y agentes físicos.',
-     tags:['salud','movimiento','rehabilitación','cuidado','cuerpo']},
-    {id:'ODO',c:'S',u:'UNNE',f:'Facultad de Odontología',n:'Odontología',y:'5 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Odontólogo capaz de diagnosticar, prevenir y tratar enfermedades de la cavidad bucal y del sistema estomatognático.',
-     e:'Anatomía y fisiología bucal, operatoria dental, endodoncia, periodoncia, cirugía y prótesis.',
-     tags:['salud','cuidado','precisión','clínica']},
-    {id:'BQ',c:'S',u:'UNNE',f:'Facultad de Cs. Exactas y Naturales y Agrimensura',n:'Bioquímica',y:'6 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Bioquímico capaz de realizar, interpretar y validar análisis clínicos y de laboratorio, y de participar en investigación biomédica.',
-     e:'Química, biología molecular, bioquímica clínica, microbiología, inmunología y análisis clínicos.',
-     tags:['laboratorio','salud','análisis','ciencia','diagnóstico']},
-    {id:'VET',c:'S',u:'UNNE',f:'Facultad de Ciencias Veterinarias',n:'Ciencias Veterinarias',y:'5 años y medio',t:'Grado',sede:'Corrientes Capital',
-     p:'Médico veterinario capaz de diagnosticar, tratar y prevenir enfermedades animales, y de intervenir en la producción animal y la salud pública.',
-     e:'Anatomía, fisiología, patología, clínica de animales, salud pública y producción animal.',
-     tags:['animales','salud','campo','cuidado','ciencia']},
-    {id:'GIS',c:'S',u:'UNNE',f:'Facultad de Odontología',n:'Tecnicatura Universitaria en Gestión de Instituciones Universitarias del Área de la Salud',y:'2 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Técnico capacitado para apoyar la gestión administrativa y organizacional de instituciones universitarias del área de la salud.',
-     e:'Gestión universitaria, administración de instituciones de salud, normativa y gestión de recursos.',
-     tags:['gestión','salud','organización','instituciones']},
-
-    // —— DERECHO, JUSTICIA Y SEGURIDAD (J) ——
-    {id:'AB',c:'J',u:'UNNE',f:'Facultad de Derecho y Cs. Sociales y Políticas',n:'Abogacía',y:'6 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Abogado capaz de asesorar, representar y defender intereses jurídicos de personas e instituciones en distintos fueros.',
-     e:'Derecho civil, penal, constitucional, administrativo, laboral, comercial y procesal.',
-     tags:['derecho','justicia','argumentación','normas','personas']},
-    {id:'MAR',c:'J',u:'UNNE',f:'Facultad de Derecho y Cs. Sociales y Políticas',n:'Martillero Público y Corredor de Comercio',y:'2 años',t:'Pregrado',sede:'Corrientes Capital',
-     p:'Profesional capacitado para realizar remates públicos y privados, y actuar como intermediario en operaciones comerciales e inmobiliarias.',
-     e:'Derecho comercial, valuaciones, procedimientos de remate y corretaje inmobiliario.',
-     tags:['comercio','inmobiliario','negociación','organización']},
-    {id:'CR',c:'J',u:'UNNE',f:'Instituto de Cs. Criminalísticas y Criminología',n:'Licenciatura en Criminalística',y:'4 años',t:'Grado',sede:'Corrientes Capital',
-     p:'Criminalista capaz de aplicar métodos científicos al análisis de evidencias en el marco de investigaciones judiciales.',
-     e:'Criminalística, medicina legal, balística, documentología, papiloscopía y química forense.',
-     tags:['investigación','ciencia','justicia','análisis','forense']},
-    {id:'SEG',c:'J',u:'UNNE',f:'Instituto de Cs. Criminalísticas y Criminología',n:'Licenciatura en Seguridad Pública y Ciudadana',y:'1 año y medio',t:'Ciclo de complementación',sede:'Corrientes Capital',
-     p:'Profesional capaz de analizar, diseñar y gestionar políticas y estrategias de seguridad pública y ciudadana.',
-     e:'Políticas de seguridad, gestión de la seguridad pública, prevención del delito y derechos humanos.',
-     tags:['seguridad','políticas','gestión','prevención']}
-  ];
-
-  /* =====================================================================
-     PERFILES
-     ===================================================================== */
-  var PERFILES = {
-    T: { nombre:'Tecnología y Computación', color:'#5b7cfa',
-         lema:'Te mueven la lógica, la innovación y construir cosas que antes no existían.',
-         msg:'Dentro de 10 años el mundo va a necesitar más personas que sepan crear, automatizar y entender la tecnología. Tus respuestas muestran interés genuino por resolver problemas con código, datos y sistemas. Es un camino con fuerte salida laboral en la región y también a distancia.' },
-    I: { nombre:'Ingeniería e Industria', color:'#e0894a',
-         lema:'Te gusta entender cómo funcionan las cosas y hacer que funcionen mejor.',
-         msg:'La región necesita gente que sostenga la energía, la industria y la infraestructura. Tus respuestas combinan interés por la técnica, el cálculo y el trabajo concreto: podrías ver con tus propios ojos las obras, las máquinas y los procesos que ayudaste a crear.' },
-    A: { nombre:'Agro y Producción', color:'#5a9e3e',
-         lema:'Te atrae el campo, la producción y el vínculo con la naturaleza.',
-         msg:'El Nordeste es tierra productiva. Tus respuestas muestran afinidad con el trabajo agropecuario, la producción y el cuidado de los recursos naturales. Es un camino con fuerte anclaje regional y muchas posibilidades de desarrollo.' },
-    S: { nombre:'Ciencias de la Salud', color:'#e5577e',
-         lema:'Te mueven la ciencia, el cuerpo y el cuidado de las personas (o de los animales).',
-         msg:'Es un camino exigente, pero con un impacto muy directo en la vida de los demás. Tus respuestas muestran curiosidad científica y vocación de servicio: en unos años podrías estar cuidando, diagnosticando o investigando para mejorar la salud de tu comunidad.' },
-    N: { nombre:'Economía, Negocios y Gestión', color:'#2fb585',
-         lema:'Ves oportunidades donde otros ven números, y sabés organizar para que las cosas pasen.',
-         msg:'Los emprendimientos, el campo, el turismo y las empresas de la región necesitan gente con visión y criterio. Tus respuestas muestran perfil de gestión: podrías dirigir tu propio proyecto o asesorar a quienes hacen crecer la economía local.' },
-    D: { nombre:'Diseño y Creatividad', color:'#a35cf0',
-         lema:'Imaginás, dibujás y diseñás: tu creatividad es tu mejor herramienta.',
-         msg:'Diseñar espacios, marcas, objetos o contenidos es dar forma al mundo en el que vivimos. Tus respuestas combinan creatividad con técnica: podrías proyectar una ciudad, crear la identidad de una marca o inventar productos que usen miles de personas.' },
-    H: { nombre:'Educación, Arte, Cultura y Humanidades', color:'#3aa6c9',
-         lema:'Te importan las personas, el conocimiento, la cultura y la identidad de tu comunidad.',
-         msg:'Educar, crear, investigar y gestionar cultura transforma sociedades enteras. Tus respuestas muestran un perfil de quien inspira, comunica y conecta: podrías estar enseñando, produciendo arte, investigando o liderando proyectos culturales y educativos.' },
-    X: { nombre:'Ciencias Exactas e Investigación', color:'#6b7a99',
-         lema:'Te atrae entender cómo funciona el mundo desde la lógica, la experimentación y el rigor científico.',
-         msg:'La ciencia necesita mentes curiosas y rigurosas. Tus respuestas muestran gusto por el razonamiento abstracto, el laboratorio o la investigación: podrías estar descubriendo, modelando o enseñando los fundamentos de la naturaleza y la matemática.' },
-    J: { nombre:'Derecho, Justicia y Seguridad', color:'#6c5ce7',
-         lema:'Buscás la verdad, argumentás con convicción y te importa lo justo.',
-         msg:'La justicia y la seguridad necesitan profesionales éticos, rigurosos y comprometidos. Tus respuestas muestran pensamiento crítico y sentido de justicia: podrías estar defendiendo derechos, mediando en conflictos o aportando pruebas científicas que marquen la diferencia.' }
-  };
-  var ORDEN = ['T','I','A','S','N','D','H','X','J'];
-
-  /* =====================================================================
-     AFIRMACIONES
-     Formato: [sección, texto, pesos]
-     pesos: "ID#" = carrera + peso (1-3)  |  "P:X#" = perfil completo + peso
-     ===================================================================== */
-  var SECCIONES = [
-    'Tecnología e ingeniería',
-    'Ciencias, salud y naturaleza',
-    'Diseño, arte y cultura',
-    'Sociedad, justicia y negocios',
-    'Tu vida dentro de 10 años'
-  ];
-
-  var ITEMS = [
-    // —— 0. Tecnología e ingeniería ——
-    [0, '¿Cuánto te atrae programar, es decir, escribir código para crear aplicaciones, sitios web o sistemas?', 'SI3 PR3 PRD3 APU3 LS3 P:T2'],
-    [0, '¿Cuánto te interesa analizar datos y resolver problemas con matemática, lógica y algoritmos?', 'LS2 SI2 MAT3 PR2 APU2 P:T2 P:X2'],
-    [0, '¿Cuánto te gusta armar, reparar o programar dispositivos electrónicos, sensores y robots?', 'MC3 TMC3 ELN3 EM2 P:I2'],
-    [0, '¿Cuánto te interesa trabajar con instalaciones eléctricas, motores, máquinas y sistemas de energía?', 'ELE3 EM3 EMU3 RED3 MEC2 P:I2'],
-    [0, '¿Cuánto te atrae diseñar procesos industriales que transformen materias primas en productos?', 'QU3 IND2 EM2 P:I2'],
-    [0, '¿Cuánto te atrae calcular y dirigir la construcción de puentes, rutas, edificios o represas?', 'CIV3 AR2 AGR1 P:I2'],
-    [0, '¿Cuánto te interesa medir el territorio, hacer mapas o trabajar con sistemas de información geográfica?', 'AGR3 LG2 PG1 P:I1'],
-    [0, '¿Cuánto te importa que las obras y las industrias cuiden el ambiente y sean sustentables?', 'QU2 CIV2 AGN2 TU1 AR1 P:A1'],
-
-    // —— 1. Ciencias, salud y naturaleza ——
-    [1, '¿Cuánto te gusta trabajar en un laboratorio con reactivos, microscopios y experimentos?', 'BQ3 QUI3 BIO2 FIS2 QU2 CR1 P:X2 P:S1'],
-    [1, '¿Cuánto te interesa entender cómo funciona el cuerpo humano y cómo se tratan las enfermedades?', 'MD3 ENF2 KIN2 BQ2 ODO1 P:S3'],
-    [1, '¿Cuánto te atrae atender y cuidar personas con problemas de salud, aunque implique mucha responsabilidad?', 'MD3 ENF3 KIN2 ODO2 P:S3'],
-    [1, '¿Cuánto te atrae el cuidado y la salud de los animales?', 'VET3 API1 P:S2 P:A1'],
-    [1, '¿Cuánto te interesa la producción agropecuaria, el campo y el trabajo con la tierra o los animales de producción?', 'AGN3 ARU3 API2 MECAG2 AGA2 P:A3'],
-    [1, '¿Cuánto te atrae investigar y generar conocimiento científico nuevo?', 'MAT2 FIS3 QUI3 BIO3 LS2 BQ2 P:X3'],
-    [1, '¿Cuánto te interesa la conservación de la naturaleza, la ecología y el ambiente?', 'BIO3 AGN2 LG2 P:X1 P:A1'],
-
-    // —— 2. Diseño, arte y cultura ——
-    [2, '¿Cuánto te gusta imaginar y diseñar espacios, edificios o ciudades?', 'AR3 CIV1 DI1 P:D3'],
-    [2, '¿Cuánto te gusta dibujar, crear identidades visuales, afiches o interfaces digitales?', 'DG3 AV2 DI1 AC1 P:D3'],
-    [2, '¿Cuánto te interesa diseñar objetos y productos pensando en los materiales, la comodidad y cómo se fabrican?', 'DI3 MEC1 EM1 AR1 P:D2'],
-    [2, '¿Cuánto te atrae crear o producir arte, cine, teatro, música o contenidos audiovisuales?', 'AC3 AV3 DG2 GC1 P:H2 P:D1'],
-    [2, '¿Cuánto te interesa organizar eventos, museos o proyectos que cuiden y difundan la cultura de tu región?', 'GC3 TG3 AC1 TU1 P:H2'],
-    [2, '¿Cuánto te gusta escribir, leer con mirada crítica o trabajar con el lenguaje y la literatura?', 'LL3 PL3 CS2 PEJ2 P:H2'],
-
-    // —— 3. Sociedad, justicia y negocios ——
-    [3, '¿Cuánto te gusta enseñar, acompañar a otras personas en su aprendizaje y pensar cómo mejorar la educación?', 'ED3 PE3 EI3 LE2 PM2 PFI2 P:H3'],
-    [3, '¿Cuánto te atrae planificar viajes, hoteles o destinos turísticos, y recibir gente de otros lugares?', 'TU3 TT3 GC1 AD1 P:N2'],
-    [3, '¿Cuánto te gusta debatir, argumentar y defender una postura con fundamentos?', 'AB3 CR1 EC1 LF1 P:J2'],
-    [3, '¿Cuánto te interesa estudiar las leyes y cómo se aplican para resolver conflictos entre las personas?', 'AB3 CR2 RL1 P:J3'],
-    [3, '¿Cuánto te atrae usar la ciencia para analizar evidencias: huellas, documentos, pruebas forenses?', 'CR3 BQ2 QUI1 AB1 P:J2'],
-    [3, '¿Cuánto te gusta trabajar con números: cuentas, costos, impuestos y balances de una empresa?', 'CP3 EC2 AD2 P:N3'],
-    [3, '¿Cuánto te atrae tener tu propio emprendimiento y tomar decisiones económicas o de gestión?', 'AD3 CP2 TU2 ARU2 DG1 P:N3'],
-    [3, '¿Cuánto te interesa gestionar personas, negociar y resolver conflictos laborales?', 'RL3 ARL3 AD1 AB1 P:N2'],
-    [3, '¿Cuánto te interesa el comercio exterior, la logística o conectar la región con otros mercados?', 'CE3 LOG2 AD1 P:N2'],
-
-    // —— 4. Tu vida dentro de 10 años ——
-    [4, 'Dentro de 10 años, ¿qué tan importante es para vos poder trabajar a distancia para empresas de cualquier lugar?', 'SI2 PR2 PRD3 LS2 DG2 CS1 P:T2'],
-    [4, '¿Qué tan importante es para vos pasar gran parte de tus días al aire libre, en obras, plantas, el campo o el territorio?', 'CIV2 AGN3 ARU2 EM1 QU1 AR1 AGR2 P:A2 P:I1'],
-    [4, '¿Qué tan importante es para vos trabajar en el sector público (hospitales, escuelas, juzgados, organismos del Estado)?', 'AB2 ED2 CR2 MD2 ENF1 GC1 P:J1 P:H1 P:S1'],
-    [4, '¿Qué tan importante es para vos empezar a trabajar relativamente pronto, con una carrera de 2 o 3 años?', 'PR3 PRD3 TMC3 TT2 TG2 APU2 LOG2 RED2 P:T1']
-  ];
+  var D = {"careers":[{"mn":"AR","id":"UNNE-001","u":"UNNE","f":"Facultad de Arquitectura y Urbanismo","n":"Arquitectura","t":"Grado","d":"6 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en diseño arquitectónico, historia y teoría de la arquitectura, estructura, construcción, urbanismo, instalaciones, representación gráfica y gestión de proyectos. Incluye talleres de proyecto a lo largo de la carrera y prácticas profesionales.","perfil":"Profesional capaz de proyectar, dirigir y gestionar obras de arquitectura y urbanismo, con sensibilidad estética, conocimiento técnico y compromiso social y ambiental.","act":"Diseño de edificios y espacios urbanos; dirección de obra; asesoramiento técnico; elaboración de planos y documentación; gestión de proyectos; estudios de factibilidad; participación en planes urbanos.","hab":"Creatividad espacial, dibujo y representación, sensibilidad estética, pensamiento técnico, interés por el hábitat humano y el entorno construido, capacidad de síntesis.","amb":"Estudios de arquitectura, constructoras, organismos públicos de planeamiento, empresas de real estate, consultorías, ejercicio independiente, docencia e investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"DG","id":"UNNE-002","u":"UNNE","f":"Facultad de Arquitectura y Urbanismo","n":"Diseño Gráfico","t":"Grado","d":"4 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en tipografía, composición, identidad visual, diseño editorial, packaging, diseño digital, ilustración, fotografía, semiótica y comunicación visual. Incluye talleres de proyecto y herramientas digitales.","perfil":"Diseñador capaz de conceptualizar y desarrollar soluciones de comunicación visual para distintos soportes y medios, con mirada crítica y sensibilidad estética.","act":"Diseño de identidades visuales, piezas editoriales, packaging, campañas publicitarias, interfaces digitales, señalética; dirección de arte; producción gráfica.","hab":"Creatividad visual, sensibilidad estética, manejo de software de diseño, comunicación, atención al detalle, interés por la cultura visual y las tendencias.","amb":"Agencias de publicidad y diseño, estudios independientes, departamentos de marketing, editoriales, productoras, empresas de packaging, freelancing.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"DI","id":"UNNE-003","u":"UNNE","f":"Facultad de Arquitectura y Urbanismo","n":"Licenciatura en Diseño Industrial","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en diseño de productos, ergonomía, materiales y procesos productivos, representación técnica, prototipado, historia del diseño, marketing de producto y sustentabilidad. Incluye talleres de proyecto y prácticas.","perfil":"Profesional que proyecta objetos y sistemas de uso cotidiano o industrial, integrando aspectos formales, funcionales, técnicos, ergonómicos y de mercado.","act":"Diseño de productos; desarrollo de prototipos; selección de materiales y procesos; diseño de interfaces físicas; investigación de usuario; coordinación con ingeniería y producción.","hab":"Creatividad aplicada a objetos, interés por cómo funcionan las cosas, sensibilidad formal, pensamiento sistémico, habilidad manual y digital para prototipar.","amb":"Empresas de producto, estudios de diseño industrial, departamentos de I+D, industria manufacturera, consultorías de innovación, freelancing.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"AC","id":"UNNE-004","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Licenciatura en Artes Combinadas","t":"Grado","d":"4 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación interdisciplinaria en artes visuales, música, teatro, danza y medios audiovisuales. Incluye historia del arte, teoría estética, producción artística, gestión cultural y proyectos interdisciplinarios.","perfil":"Artista y gestor con formación integral en distintas disciplinas artísticas, capaz de producir, investigar y mediar entre el arte y la sociedad.","act":"Producción artística interdisciplinaria; curaduría; gestión de proyectos culturales; docencia artística; investigación en artes; coordinación de eventos y festivales.","hab":"Sensibilidad artística, creatividad, apertura interdisciplinaria, expresión, interés por la cultura contemporánea y el trabajo colaborativo.","amb":"Centros culturales, museos, teatros, productoras, instituciones educativas, organismos de cultura, proyectos independientes y colectivos artísticos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":4},{"mn":"TGC","id":"UNNE-005","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Tecnicatura en Gestión y Desarrollo Cultural","t":"Pregrado","d":"3 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en gestión cultural, políticas culturales, producción de eventos, administración de proyectos culturales, comunicación cultural y desarrollo local. Orientada a la práctica profesional.","perfil":"Técnico capacitado para organizar, administrar y desarrollar proyectos y actividades culturales en distintos contextos.","act":"Organización de eventos culturales; administración de espacios culturales; elaboración de proyectos; difusión cultural; apoyo a la gestión pública y privada de la cultura.","hab":"Organización, comunicación, interés por la cultura y el arte, capacidad de trabajo en equipo, sensibilidad social.","amb":"Municipios, centros culturales, fundaciones, teatros, museos, productoras de eventos, ONGs culturales.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":4},{"mn":"LGC","id":"UNNE-006","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Licenciatura en Gestión y Desarrollo Cultural","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación avanzada en políticas culturales, gestión de instituciones culturales, economía de la cultura, planificación estratégica, investigación cultural y desarrollo territorial. Incluye prácticas y tesis.","perfil":"Profesional capaz de diseñar, gestionar y evaluar políticas y proyectos culturales con mirada estratégica y territorial.","act":"Dirección y gestión de instituciones culturales; diseño de políticas culturales; consultoría; investigación; coordinación de programas de desarrollo cultural.","hab":"Pensamiento estratégico, liderazgo, interés por la cultura y el desarrollo social, capacidad de análisis y gestión de proyectos.","amb":"Organismos públicos de cultura, fundaciones, centros culturales, consultoras, universidades, organismos internacionales.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":4},{"mn":"TTU","id":"UNNE-007","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Tecnicatura en Turismo","t":"Pregrado","d":"3 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en gestión turística, geografía turística, patrimonio, hotelería, agencias de viajes, marketing turístico y servicio al cliente. Orientada a la operación del sector.","perfil":"Técnico capacitado para operar y asistir en la gestión de servicios y productos turísticos.","act":"Atención en agencias de viajes; coordinación de tours; asistencia en hotelería; promoción turística; guía de grupos; soporte operativo en empresas turísticas.","hab":"Vocación de servicio, comunicación, interés por los viajes y las culturas, organización, idiomas.","amb":"Agencias de viajes, hoteles, operadoras turísticas, oficinas de turismo municipales y provinciales, empresas de transporte turístico.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"LTU","id":"UNNE-008","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Licenciatura en Turismo","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en planificación turística, gestión de destinos, marketing turístico, economía del turismo, patrimonio cultural y natural, sustentabilidad y políticas turísticas. Incluye prácticas y proyectos.","perfil":"Profesional capaz de planificar, gestionar y desarrollar destinos y productos turísticos de manera sustentable e integral.","act":"Planificación de destinos; diseño de productos turísticos; gestión hotelera y de agencias; consultoría; investigación turística; políticas públicas de turismo.","hab":"Visión estratégica, interés por el territorio y la cultura, capacidad de gestión, comunicación, sensibilidad ambiental y social.","amb":"Organismos públicos de turismo, hoteles y cadenas, operadoras, consultoras, universidades, ONGs de turismo sustentable.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"TDM","id":"UNNE-009","u":"UNNE","f":"Facultad de Artes, Diseño y Ciencias de la Cultura","n":"Tecnicatura en Diseño de Imagen, Sonido y Multimedia","t":"Pregrado","d":"3 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en producción audiovisual, diseño de sonido, edición de video, animación, multimedia interactiva, fotografía y postproducción. Orientada a la práctica técnica y creativa.","perfil":"Técnico capaz de producir y editar contenidos audiovisuales y multimedia para distintos medios y plataformas.","act":"Producción y edición de video; diseño sonoro; animación; realización de contenidos multimedia; asistencia en producciones audiovisuales; postproducción.","hab":"Creatividad audiovisual, manejo de software de edición, interés por el cine y los medios digitales, trabajo técnico-creativo.","amb":"Productoras audiovisuales, medios de comunicación, agencias de publicidad, productoras de contenido digital, freelancing.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"IAG","id":"UNNE-010","u":"UNNE","f":"Facultad de Ciencias Agrarias","n":"Ingeniería Agronómica","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en producción vegetal y animal, suelos, climatología, fitopatología, entomología, maquinaria agrícola, economía agraria, extensión rural y manejo sustentable de recursos. Incluye prácticas de campo.","perfil":"Ingeniero capaz de planificar, dirigir y asesorar sistemas de producción agropecuaria de manera eficiente y sustentable.","act":"Asesoramiento técnico a productores; gestión de establecimientos agropecuarios; investigación aplicada; extensión rural; control de calidad; diseño de sistemas productivos.","hab":"Interés por el campo y la producción, capacidad de observación, pensamiento práctico y científico, vocación de servicio rural.","amb":"Establecimientos agropecuarios, cooperativas, empresas de insumos, organismos oficiales (INTA, ministerios), consultorías, investigación y docencia.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":7},{"mn":"IIN","id":"UNNE-011","u":"UNNE","f":"Facultad de Ciencias Agrarias","n":"Ingeniería Industrial","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en procesos productivos, optimización, logística, calidad, gestión de operaciones, ingeniería de métodos, economía industrial y sistemas de producción. Aplicada también al agro.","perfil":"Ingeniero orientado a la mejora de procesos, la eficiencia y la gestión de sistemas productivos e industriales.","act":"Diseño y mejora de procesos; gestión de operaciones; control de calidad; logística; análisis de costos; implementación de sistemas de mejora continua.","hab":"Pensamiento analítico y sistémico, interés por la eficiencia, capacidad de organización, resolución de problemas prácticos.","amb":"Industrias manufactureras, agroindustrias, empresas de servicios, consultorías de procesos, áreas de operaciones y calidad.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":2},{"mn":"TAP","id":"UNNE-012","u":"UNNE","f":"Facultad de Ciencias Agrarias","n":"Tecnicatura Universitaria en Apicultura","t":"Pregrado","d":"3 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en biología de la abeja, manejo de colmenas, sanidad apícola, producción de miel y derivados, comercialización y gestión del apiario. Orientada a la práctica productiva.","perfil":"Técnico especializado en la producción apícola, capaz de manejar apiarios y desarrollar la cadena de valor de la miel y productos de la colmena.","act":"Manejo de colmenas; producción de miel y derivados; control sanitario; asesoramiento a productores apícolas; comercialización de productos.","hab":"Interés por las abejas y el ambiente, trabajo de campo, observación, paciencia, vocación productiva.","amb":"Apiarios propios o de terceros, cooperativas apícolas, organismos de extensión, empresas de productos de la colmena.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":7},{"mn":"TMA","id":"UNNE-013","u":"UNNE","f":"Facultad de Ciencias Agrarias","n":"Tecnicatura Universitaria en Mecanización Agraria","t":"Pregrado","d":"3 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en maquinaria agrícola, mantenimiento, operación de equipos, tecnología de precisión, hidráulica y sistemas mecánicos aplicados al agro. Orientada a la práctica técnica.","perfil":"Técnico capaz de operar, mantener y asesorar sobre maquinaria y equipamiento agrícola.","act":"Operación y mantenimiento de maquinaria; diagnóstico de fallas; asesoramiento en mecanización; soporte técnico en concesionarias y talleres.","hab":"Interés por la mecánica y la tecnología, habilidad manual, trabajo práctico, afinidad con el sector agropecuario.","amb":"Establecimientos agropecuarios, concesionarias de maquinaria, talleres, empresas de servicios agrícolas, organismos técnicos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":7},{"mn":"CP","id":"UNNE-014","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Contador Público","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en contabilidad, auditoría, costos, tributación, derecho comercial y laboral, finanzas, economía y sistemas de información contable. Incluye práctica profesional supervisada.","perfil":"Profesional capacitado para registrar, analizar e interpretar información económica y financiera, y asesorar en aspectos contables, impositivos y societarios.","act":"Contabilidad general; auditoría; liquidación de impuestos; asesoramiento impositivo y societario; análisis financiero; peritajes contables.","hab":"Precisión numérica, orden, pensamiento analítico, interés por las normas y la economía de las organizaciones, ética profesional.","amb":"Estudios contables, empresas (áreas de contabilidad y finanzas), organismos públicos, auditorías, ejercicio independiente, banca.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"LAD","id":"UNNE-015","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Licenciatura en Administración","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en administración general, marketing, recursos humanos, finanzas, operaciones, estrategia empresarial, economía y derecho aplicado a la empresa. Incluye prácticas y proyectos.","perfil":"Profesional capaz de gestionar organizaciones, tomar decisiones estratégicas y liderar equipos en distintos tipos de empresas e instituciones.","act":"Gestión de empresas; dirección de áreas funcionales; análisis de negocios; consultoría organizacional; planificación estratégica; gestión de proyectos.","hab":"Liderazgo, visión de negocios, capacidad de organización, comunicación, interés por las organizaciones y el mercado.","amb":"Empresas privadas, organismos públicos, consultoras, ONGs, emprendimientos propios, áreas de management.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"LEC","id":"UNNE-016","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Licenciatura en Economía","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en microeconomía, macroeconomía, econometría, historia económica, finanzas públicas, desarrollo económico y políticas económicas. Incluye métodos cuantitativos y análisis de datos.","perfil":"Economista capaz de analizar y explicar fenómenos económicos, diseñar políticas y asesorar en decisiones económicas a nivel micro y macro.","act":"Análisis económico; investigación; consultoría; diseño de políticas públicas; análisis de mercados; proyección y modelización económica.","hab":"Pensamiento analítico y abstracto, interés por los datos y los modelos, curiosidad por los problemas sociales y económicos, capacidad de argumentación.","amb":"Organismos públicos, bancos, consultoras, centros de investigación, organismos internacionales, empresas (áreas de análisis y finanzas).","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"TRL","id":"UNNE-017","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Analista en Relaciones Laborales","t":"Grado","d":"2 años y medio","m":"Presencial","s":"Corrientes Capital","plan":"Formación en derecho laboral, negociación colectiva, administración de personal, conflictos laborales, seguridad social y relaciones industriales. Orientada a la práctica.","perfil":"Analista capacitado para intervenir en las relaciones entre empleadores y trabajadores, y en la gestión de personal.","act":"Administración de personal; mediación en conflictos; liquidación de haberes; asesoramiento en relaciones laborales; soporte en negociaciones colectivas.","hab":"Capacidad de mediación, comunicación, interés por el mundo del trabajo, sensibilidad social, organización.","amb":"Áreas de recursos humanos de empresas, sindicatos, estudios jurídicos laborales, organismos públicos de trabajo.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"LRL","id":"UNNE-018","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Licenciatura en Relaciones Laborales","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación avanzada en derecho del trabajo, negociación colectiva, gestión estratégica de recursos humanos, sociología del trabajo, economía laboral y políticas de empleo.","perfil":"Profesional capaz de gestionar integralmente las relaciones laborales y el capital humano en organizaciones, con mirada estratégica y jurídica.","act":"Dirección de recursos humanos; negociación colectiva; diseño de políticas de personal; mediación y resolución de conflictos; consultoría en relaciones laborales.","hab":"Liderazgo, negociación, pensamiento estratégico, interés por las organizaciones y el trabajo, capacidad de diálogo.","amb":"Empresas (RRHH), sindicatos, consultoras, organismos públicos, estudios jurídicos especializados.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"LCE","id":"UNNE-019","u":"UNNE","f":"Facultad de Ciencias Económicas","n":"Licenciatura en Comercio Exterior","t":"Grado","d":"5 años","m":"Presencial","s":"Paso de los Libres, Corrientes","plan":"Formación en comercio internacional, logística internacional, aduanas, marketing internacional, economía internacional, contratos internacionales y operatoria de exportación/importación.","perfil":"Profesional capacitado para gestionar operaciones de comercio exterior y desarrollar estrategias de inserción internacional de empresas.","act":"Gestión de exportaciones e importaciones; operatoria aduanera; logística internacional; investigación de mercados externos; asesoramiento en comercio exterior.","hab":"Interés por los negocios internacionales, idiomas, capacidad de gestión, visión global, organización y atención a normativas.","amb":"Empresas exportadoras/importadoras, trading companies, despachantes de aduana, organismos de promoción comercial, consultoras.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"IAM","id":"UNNE-020","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Ingeniería en Agrimensura","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en topografía, geodesia, cartografía, sistemas de información geográfica (SIG), derecho de la propiedad, valuaciones y catastro. Incluye trabajo de campo y laboratorio.","perfil":"Ingeniero capacitado para medir, representar y gestionar el territorio y la propiedad inmueble con precisión técnica y jurídica.","act":"Levantamientos topográficos; mensuras; catastro; valuaciones; elaboración de cartografía; uso de SIG y GNSS; peritajes.","hab":"Precisión, trabajo de campo, interés por el territorio y la tecnología de medición, capacidad espacial y matemática.","amb":"Estudios de agrimensura, organismos catastrales, empresas de ingeniería y construcción, minería, organismos públicos, ejercicio independiente.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"LMA","id":"UNNE-021","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Licenciatura en Matemática","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en álgebra, análisis matemático, geometría, topología, probabilidad y estadística, y áreas de matemática aplicada. Incluye formación en investigación y docencia.","perfil":"Matemático con sólida formación teórica y capacidad para aplicar el razonamiento abstracto a problemas científicos, tecnológicos o educativos.","act":"Investigación matemática; docencia universitaria y secundaria; modelización matemática; análisis de datos; consultoría en áreas que requieren matemática avanzada.","hab":"Razonamiento abstracto y lógico, gusto por la resolución de problemas, precisión, interés por las estructuras y los fundamentos.","amb":"Universidades e investigación, enseñanza secundaria y superior, industria (modelización), finanzas cuantitativas, organismos técnicos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":5},{"mn":"LFI","id":"UNNE-022","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Licenciatura en Ciencias Físicas","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en mecánica, electromagnetismo, termodinámica, física cuántica, óptica, física experimental y métodos matemáticos. Incluye laboratorio e investigación.","perfil":"Físico con formación sólida en los fundamentos de la física y capacidad para investigar, modelar y aplicar conocimientos a problemas científicos y tecnológicos.","act":"Investigación científica; docencia; desarrollo tecnológico; modelización de sistemas físicos; trabajo en laboratorios y centros de I+D.","hab":"Curiosidad científica, pensamiento analítico, interés por entender cómo funciona la naturaleza, capacidad experimental y matemática.","amb":"Universidades y centros de investigación, industria tecnológica, laboratorios, organismos científicos, docencia.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":5},{"mn":"LQU","id":"UNNE-023","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Licenciatura en Ciencias Químicas","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en química general, orgánica, inorgánica, analítica, físico-química, bioquímica y química industrial. Incluye laboratorio intensivo e investigación.","perfil":"Químico capaz de investigar, analizar y desarrollar sustancias y procesos químicos en ámbitos científicos e industriales.","act":"Análisis químico; investigación y desarrollo; control de calidad; síntesis de compuestos; trabajo en laboratorios industriales y de investigación.","hab":"Interés por la composición de la materia, precisión experimental, pensamiento analítico, gusto por el laboratorio.","amb":"Laboratorios de análisis, industria química y farmacéutica, centros de investigación, organismos de control, docencia.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":5},{"mn":"LBI","id":"UNNE-024","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Licenciatura en Ciencias Biológicas","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en biología celular y molecular, genética, ecología, zoología, botánica, microbiología, evolución y biología de la conservación. Incluye trabajo de campo y laboratorio.","perfil":"Biólogo con formación integral capaz de investigar, conservar y gestionar la biodiversidad y los sistemas biológicos.","act":"Investigación biológica; conservación de la biodiversidad; estudios de impacto ambiental; trabajo en laboratorios; docencia; gestión de recursos naturales.","hab":"Curiosidad por la vida y la naturaleza, observación, trabajo de campo y laboratorio, pensamiento científico, sensibilidad ambiental.","amb":"Centros de investigación, organismos de ambiente y conservación, laboratorios, museos, universidades, consultoras ambientales.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":5},{"mn":"APU","id":"UNNE-025","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Analista Programador Universitario","t":"Pregrado","d":"3 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en programación, algoritmos, estructuras de datos, bases de datos, desarrollo de software, sistemas operativos y fundamentos de la computación. Orientada a la práctica.","perfil":"Analista programador capaz de diseñar, desarrollar y mantener aplicaciones de software.","act":"Programación de aplicaciones; análisis de sistemas; desarrollo web y de software; mantenimiento de sistemas; soporte técnico de desarrollo.","hab":"Lógica, resolución de problemas, interés por la tecnología y la programación, capacidad de aprendizaje continuo, atención al detalle.","amb":"Empresas de software, departamentos de sistemas, startups, freelancing, organismos públicos, consultoras de IT.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":0},{"mn":"LSI","id":"UNNE-026","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Licenciatura en Sistemas de Información","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en análisis y diseño de sistemas, bases de datos, ingeniería de software, redes, seguridad informática, gestión de proyectos de TI y arquitectura de sistemas.","perfil":"Profesional capaz de analizar, diseñar, implementar y gestionar sistemas de información en organizaciones.","act":"Análisis de sistemas; diseño e implementación de software; gestión de proyectos de TI; administración de bases de datos; consultoría en sistemas.","hab":"Pensamiento sistémico, lógica, interés por la tecnología aplicada a las organizaciones, capacidad de análisis y comunicación.","amb":"Empresas de software, departamentos de sistemas, consultoras de TI, organismos públicos, industria en general.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":0},{"mn":"IEL","id":"UNNE-027","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Ingeniería Eléctrica","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en circuitos eléctricos, máquinas eléctricas, generación y distribución de energía, electrónica de potencia, instalaciones eléctricas, control y automatización. Incluye laboratorio y proyectos.","perfil":"Ingeniero capaz de diseñar, proyectar y dirigir sistemas de generación, transmisión, distribución y utilización de la energía eléctrica.","act":"Diseño de instalaciones eléctricas; proyectos de generación y distribución; mantenimiento de sistemas eléctricos; automatización; consultoría energética.","hab":"Interés por la electricidad y la energía, pensamiento técnico, capacidad de cálculo, resolución de problemas prácticos, seguridad.","amb":"Empresas de energía, industrias, constructoras, consultoras de ingeniería, organismos de regulación, ejercicio independiente.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":1},{"mn":"IET","id":"UNNE-028","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Ingeniería en Electrónica","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en circuitos electrónicos, microprocesadores, comunicaciones, control automático, instrumentación, procesamiento de señales y sistemas embebidos. Incluye laboratorio y proyectos.","perfil":"Ingeniero capaz de diseñar, desarrollar y mantener sistemas electrónicos y de control para diversas aplicaciones.","act":"Diseño de circuitos y sistemas electrónicos; desarrollo de sistemas embebidos; automatización industrial; telecomunicaciones; instrumentación.","hab":"Interés por la electrónica y la tecnología, pensamiento lógico y técnico, habilidad para el diseño y la experimentación, resolución de problemas.","amb":"Industria electrónica, automatización, telecomunicaciones, empresas de tecnología, I+D, consultoras.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":1},{"mn":"BQ","id":"UNNE-029","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Bioquímica","t":"Grado","d":"6 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en química, biología molecular, bioquímica clínica, microbiología, inmunología, hematología, toxicología y análisis clínicos. Incluye prácticas en laboratorios.","perfil":"Bioquímico capaz de realizar, interpretar y validar análisis clínicos y de laboratorio, y de participar en investigación biomédica.","act":"Análisis clínicos; dirección técnica de laboratorios; control de calidad; investigación biomédica; asesoramiento en diagnóstico de laboratorio.","hab":"Precisión, interés por la química y la biología aplicadas a la salud, rigor científico, trabajo de laboratorio, responsabilidad.","amb":"Laboratorios de análisis clínicos, hospitales, industria farmacéutica y de alimentos, centros de investigación, organismos de control.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"PMA","id":"UNNE-030","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Profesorado en Matemática","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en matemática (álgebra, análisis, geometría, probabilidad) y en pedagogía, didáctica de la matemática, psicología educativa y práctica docente.","perfil":"Docente capacitado para enseñar matemática en el nivel secundario y superior, con sólida formación disciplinar y pedagógica.","act":"Enseñanza de matemática; planificación didáctica; evaluación; investigación educativa; diseño de materiales didácticos.","hab":"Vocación docente, claridad para explicar, paciencia, interés por la matemática y por facilitar el aprendizaje.","amb":"Escuelas secundarias, institutos terciarios, universidades, centros de apoyo escolar, diseño de materiales educativos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"PFI","id":"UNNE-031","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Profesorado en Física","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en física (mecánica, electromagnetismo, termodinámica, física moderna) y en pedagogía, didáctica de la física y práctica docente.","perfil":"Docente capacitado para enseñar física en el nivel secundario y superior, integrando teoría, experimentación y didáctica.","act":"Enseñanza de física; diseño de experiencias de laboratorio; planificación didáctica; investigación educativa.","hab":"Vocación docente, interés por la física y la experimentación, capacidad de explicación, curiosidad científica.","amb":"Escuelas secundarias, institutos, universidades, centros de divulgación científica, diseño de materiales educativos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"PQA","id":"UNNE-032","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Profesorado en Ciencias Químicas y del Ambiente","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en química y ciencias ambientales, pedagogía, didáctica de las ciencias y práctica docente. Integra aspectos de educación ambiental.","perfil":"Docente capacitado para enseñar química y temas ambientales en el nivel secundario, con mirada interdisciplinaria.","act":"Enseñanza de química y educación ambiental; diseño de actividades experimentales; planificación didáctica; proyectos educativos ambientales.","hab":"Vocación docente, interés por la química y el ambiente, capacidad de explicar y motivar, sensibilidad ambiental.","amb":"Escuelas secundarias, institutos, centros de educación ambiental, proyectos de divulgación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"PBI","id":"UNNE-033","u":"UNNE","f":"Facultad de Ciencias Exactas y Naturales y Agrimensura","n":"Profesorado en Biología","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en biología (celular, molecular, ecología, biodiversidad) y en pedagogía, didáctica de la biología y práctica docente.","perfil":"Docente capacitado para enseñar biología en el nivel secundario, integrando conocimientos científicos y estrategias didácticas.","act":"Enseñanza de biología; diseño de actividades de laboratorio y campo; planificación didáctica; educación ambiental.","hab":"Vocación docente, interés por la vida y la naturaleza, capacidad de explicación, sensibilidad por la enseñanza de las ciencias.","amb":"Escuelas secundarias, institutos, centros de educación ambiental, museos, proyectos de divulgación científica.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"VET","id":"UNNE-034","u":"UNNE","f":"Facultad de Ciencias Veterinarias","n":"Ciencias Veterinarias","t":"Grado","d":"5 años y medio","m":"Presencial","s":"Corrientes Capital","plan":"Formación en anatomía, fisiología, patología, clínica de animales de compañía y de producción, salud pública, producción animal y medicina preventiva. Incluye prácticas clínicas y de campo.","perfil":"Médico veterinario capaz de diagnosticar, tratar y prevenir enfermedades animales, y de intervenir en la producción animal y la salud pública.","act":"Clínica de pequeños y grandes animales; cirugía; producción animal; control de zoonosis; inspección de alimentos; investigación.","hab":"Interés por los animales y su salud, vocación de servicio, capacidad de observación clínica, resistencia al trabajo de campo y clínico.","amb":"Clínicas veterinarias, establecimientos agropecuarios, laboratorios, organismos de salud pública y bromatología, industria de alimentos, investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":7},{"mn":"TAE","id":"UNNE-035","u":"UNNE","f":"Facultad de Ciencias Veterinarias","n":"Tecnicatura en Administración de Empresas","t":"Pregrado","d":"2 años y medio","m":"Presencial","s":"Curuzú Cuatiá, Corrientes","plan":"Formación en administración general, contabilidad básica, marketing, recursos humanos, gestión de pymes y herramientas de gestión. Orientada a la práctica en contextos regionales.","perfil":"Técnico capacitado para apoyar la gestión administrativa y operativa de empresas, especialmente pymes.","act":"Administración de empresas; gestión de personal; apoyo contable y comercial; organización de procesos administrativos.","hab":"Organización, interés por los negocios, capacidad de gestión práctica, comunicación, trabajo en equipo.","amb":"Pymes, empresas regionales, organismos públicos, cooperativas, emprendimientos.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":8},{"mn":"LAG","id":"UNNE-036","u":"UNNE","f":"Facultad de Ciencias Veterinarias","n":"Licenciatura en Administración y Gestión Agropecuaria","t":"Ciclo de complementación curricular","d":"1 año y un cuatrimestre","m":"Presencial","s":"Curuzú Cuatiá, Corrientes","plan":"Ciclo de complementación orientado a la gestión de empresas agropecuarias: administración, economía agraria, comercialización, finanzas y gestión de la producción.","perfil":"Profesional capaz de gestionar integralmente empresas y establecimientos agropecuarios.","act":"Administración de establecimientos agropecuarios; gestión comercial y financiera; planificación productiva; asesoramiento en gestión rural.","hab":"Interés por el agro y la gestión, capacidad de organización, visión de negocios aplicados al campo.","amb":"Establecimientos agropecuarios, cooperativas, empresas de insumos y servicios agropecuarios, consultorías.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":7},{"mn":"AB","id":"UNNE-037","u":"UNNE","f":"Facultad de Derecho y Ciencias Sociales y Políticas","n":"Abogacía","t":"Grado","d":"6 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en derecho civil, penal, constitucional, administrativo, laboral, comercial, procesal y filosofía del derecho. Incluye práctica profesional y talleres de litigación.","perfil":"Abogado capaz de asesorar, representar y defender intereses jurídicos de personas e instituciones en distintos fueros.","act":"Asesoramiento jurídico; representación en juicios; redacción de contratos y escritos; mediación; consultoría legal; función pública.","hab":"Razonamiento jurídico, capacidad de argumentación, interés por la justicia y las normas, oratoria, rigor analítico.","amb":"Estudios jurídicos, empresas (asesoría legal), poder judicial, organismos públicos, ejercicio independiente, ONGs.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"MAR","id":"UNNE-038","u":"UNNE","f":"Facultad de Derecho y Ciencias Sociales y Políticas","n":"Martillero Público y Corredor de Comercio","t":"Pregrado","d":"2 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en derecho comercial, valuaciones, procedimientos de remate, corretaje inmobiliario y comercial, y práctica profesional del martillero.","perfil":"Profesional capacitado para realizar remates públicos y privados, y actuar como intermediario en operaciones comerciales e inmobiliarias.","act":"Organización y dirección de remates; corretaje inmobiliario y comercial; valuaciones; intermediación en compraventas.","hab":"Comunicación persuasiva, conocimiento del mercado, organización, ética comercial, capacidad de negociación.","amb":"Casas de remates, inmobiliarias, ejercicio independiente, organismos judiciales (remates judiciales).","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"PCE","id":"UNNE-039","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Ciencias de la Educación","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en pedagogía, didáctica general y específicas, psicología educativa, política educativa, historia de la educación y práctica docente.","perfil":"Docente e investigador capacitado para enseñar y reflexionar sobre los procesos educativos en distintos niveles y contextos.","act":"Enseñanza; coordinación pedagógica; diseño de proyectos educativos; investigación educativa; formación docente.","hab":"Vocación educativa, interés por los procesos de enseñanza y aprendizaje, capacidad de reflexión crítica, comunicación.","amb":"Escuelas, institutos de formación docente, organismos de educación, proyectos educativos, investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"LED","id":"UNNE-040","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Ciencias de la Educación","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación avanzada en teorías educativas, política y gestión educativa, investigación educativa, curriculum y evaluación. Orientada a la investigación y la gestión.","perfil":"Profesional capaz de investigar, diseñar y gestionar políticas y proyectos educativos en distintos niveles del sistema.","act":"Investigación educativa; diseño de políticas y programas; gestión educativa; evaluación de sistemas; consultoría pedagógica.","hab":"Pensamiento crítico, interés por la educación como fenómeno social, capacidad de análisis e investigación, visión sistémica.","amb":"Organismos de educación, universidades, centros de investigación, fundaciones educativas, consultoras.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"PFL","id":"UNNE-041","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Filosofía","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en historia de la filosofía, filosofía contemporánea, lógica, ética, filosofía de la ciencia y didáctica de la filosofía, con práctica docente.","perfil":"Docente capacitado para enseñar filosofía y promover el pensamiento crítico y reflexivo en el nivel secundario y superior.","act":"Enseñanza de filosofía; diseño de propuestas didácticas; investigación filosófica; animación de espacios de reflexión.","hab":"Gusto por la reflexión y el debate, capacidad de argumentación, curiosidad intelectual, vocación docente.","amb":"Escuelas secundarias, universidades, centros culturales, proyectos de divulgación filosófica, investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"LFL","id":"UNNE-042","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Filosofía","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación profunda en historia de la filosofía, metafísica, epistemología, ética, filosofía política y áreas especializadas. Incluye investigación y tesis.","perfil":"Filósofo capaz de investigar, enseñar y aplicar el pensamiento filosófico a problemas contemporáneos.","act":"Investigación filosófica; docencia universitaria; escritura y divulgación; asesoramiento ético; análisis crítico de discursos y problemas sociales.","hab":"Pensamiento abstracto y crítico, pasión por las ideas, capacidad de lectura y escritura rigurosa, curiosidad intelectual.","amb":"Universidades, investigación, editorial, centros culturales, organismos de ética, divulgación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"PGE","id":"UNNE-043","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Geografía","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en geografía física y humana, cartografía, SIG, geografía regional y didáctica de la geografía, con práctica docente.","perfil":"Docente capacitado para enseñar geografía y promover la comprensión del territorio y las relaciones sociedad-naturaleza.","act":"Enseñanza de geografía; uso de cartografía y SIG en educación; diseño de salidas de campo; proyectos educativos territoriales.","hab":"Interés por el territorio y el ambiente, capacidad de observación espacial, vocación docente, uso de herramientas cartográficas.","amb":"Escuelas secundarias, institutos, organismos de planificación, proyectos de educación ambiental.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"LGE","id":"UNNE-044","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Geografía","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en geografía física, humana, económica y regional, cartografía, SIG, ordenamiento territorial e investigación geográfica.","perfil":"Geógrafo capaz de analizar, planificar y gestionar el territorio desde una perspectiva integral.","act":"Estudios territoriales; ordenamiento territorial; uso de SIG; investigación geográfica; consultoría ambiental y urbana; docencia.","hab":"Interés por el territorio y las dinámicas espaciales, capacidad de análisis espacial, uso de tecnologías geoespaciales, visión integral.","amb":"Organismos de planificación, consultoras ambientales y territoriales, universidades, municipios, organismos de ambiente.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"PHI","id":"UNNE-045","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Historia","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en historia argentina, americana y mundial, historiografía, metodología de la investigación histórica y didáctica de la historia, con práctica docente.","perfil":"Docente capacitado para enseñar historia y promover la comprensión crítica del pasado y su relación con el presente.","act":"Enseñanza de historia; diseño de propuestas didácticas; investigación histórica; proyectos de memoria y patrimonio.","hab":"Interés por el pasado y las sociedades, capacidad narrativa y analítica, vocación docente, rigor en el manejo de fuentes.","amb":"Escuelas secundarias, universidades, museos, archivos, proyectos de memoria y patrimonio cultural.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"LHI","id":"UNNE-046","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Historia","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación profunda en historia argentina, americana y mundial, teoría y metodología de la historia, e investigación histórica. Incluye tesis.","perfil":"Historiador capaz de investigar, interpretar y comunicar procesos históricos con rigor metodológico.","act":"Investigación histórica; docencia universitaria; gestión de archivos y museos; divulgación histórica; asesoramiento en temas de memoria y patrimonio.","hab":"Pasión por el pasado, rigor metodológico, capacidad de análisis de fuentes, escritura académica, curiosidad histórica.","amb":"Universidades, centros de investigación, archivos, museos, editoriales, organismos de patrimonio y memoria.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"PLE","id":"UNNE-047","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Letras","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en literatura argentina, latinoamericana y universal, lingüística, teoría literaria y didáctica de la lengua y la literatura, con práctica docente.","perfil":"Docente capacitado para enseñar lengua y literatura, y promover la lectura crítica y la expresión escrita.","act":"Enseñanza de lengua y literatura; diseño de propuestas de lectura y escritura; investigación educativa; promoción de la lectura.","hab":"Amor por la lectura y la escritura, sensibilidad literaria, vocación docente, capacidad de análisis textual.","amb":"Escuelas secundarias, institutos, proyectos de promoción de la lectura, editoriales educativas.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"LLE","id":"UNNE-048","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Letras","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación profunda en literatura, lingüística, teoría literaria y crítica. Incluye investigación y producción de textos académicos.","perfil":"Licenciado en Letras capaz de investigar, criticar y producir conocimiento sobre la literatura y el lenguaje.","act":"Investigación literaria y lingüística; docencia universitaria; crítica literaria; edición; gestión cultural literaria; escritura.","hab":"Pasión por la literatura y el lenguaje, capacidad de análisis y escritura, sensibilidad estética, rigor académico.","amb":"Universidades, investigación, editorial, periodismo cultural, gestión cultural, docencia.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"LCI","id":"UNNE-049","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Ciencias de la Información (Archivología o Bibliotecología)","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en organización del conocimiento, archivística, bibliotecología, sistemas de información, preservación documental y gestión de la información.","perfil":"Profesional capaz de gestionar, organizar y preservar información y documentos en archivos, bibliotecas y centros de documentación.","act":"Gestión de archivos y bibliotecas; organización de colecciones; preservación documental; servicios de referencia; diseño de sistemas de información.","hab":"Orden, interés por la información y el patrimonio documental, capacidad de organización, precisión, servicio al usuario.","amb":"Archivos públicos y privados, bibliotecas, centros de documentación, museos, organismos oficiales, empresas.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"ARC","id":"UNNE-050","u":"UNNE","f":"Facultad de Humanidades","n":"Archivista","t":"Pregrado","d":"3 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación técnica en organización de archivos, clasificación documental, preservación, descripción archivística y servicios de archivo.","perfil":"Técnico capacitado para organizar, describir y preservar documentos de archivo.","act":"Organización de archivos; clasificación y descripción documental; atención a usuarios; preservación de documentos.","hab":"Orden, precisión, interés por la historia y los documentos, capacidad de organización.","amb":"Archivos públicos y privados, organismos oficiales, empresas, instituciones culturales.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"BIB","id":"UNNE-051","u":"UNNE","f":"Facultad de Humanidades","n":"Bibliotecario","t":"Pregrado","d":"3 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación técnica en organización de bibliotecas, catalogación, servicios de información, promoción de la lectura y gestión de colecciones.","perfil":"Técnico capacitado para gestionar servicios bibliotecarios y de información.","act":"Catalogación; atención a usuarios; organización de colecciones; promoción de la lectura; gestión de bibliotecas.","hab":"Interés por los libros y la información, vocación de servicio, orden, capacidad de comunicación.","amb":"Bibliotecas públicas, escolares y universitarias, centros de documentación, instituciones culturales.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":11},{"mn":"PEI","id":"UNNE-052","u":"UNNE","f":"Facultad de Humanidades","n":"Profesorado en Educación Inicial","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en pedagogía de la primera infancia, didácticas específicas, psicología del desarrollo, juego y práctica docente en jardines de infantes.","perfil":"Docente capacitado para educar y acompañar el desarrollo de niños y niñas en el nivel inicial.","act":"Enseñanza en nivel inicial; planificación de propuestas lúdicas y educativas; acompañamiento a familias; trabajo en equipo institucional.","hab":"Vocación por la primera infancia, paciencia, creatividad, sensibilidad, capacidad de juego y comunicación con niños.","amb":"Jardines de infantes, escuelas infantiles, proyectos de educación temprana, organismos de niñez.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"LEI","id":"UNNE-053","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Educación Inicial","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación avanzada en pedagogía de la primera infancia, políticas de educación inicial, investigación y gestión de instituciones de nivel inicial.","perfil":"Profesional capaz de investigar, gestionar y diseñar propuestas educativas para la primera infancia.","act":"Gestión de instituciones de nivel inicial; investigación; diseño de políticas y programas; formación docente; coordinación pedagógica.","hab":"Interés por la educación temprana, capacidad de gestión y liderazgo, pensamiento crítico, sensibilidad hacia la infancia.","amb":"Jardines de infantes (dirección y coordinación), organismos de educación, universidades, proyectos de investigación y políticas.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":10},{"mn":"LCS","id":"UNNE-054","u":"UNNE","f":"Facultad de Humanidades","n":"Licenciatura en Comunicación Social","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en teorías de la comunicación, periodismo, producción audiovisual y radial, comunicación institucional, opinión pública y lenguajes mediáticos.","perfil":"Comunicador capaz de producir, analizar y gestionar procesos de comunicación en medios, instituciones y organizaciones.","act":"Periodismo; producción de contenidos; comunicación institucional; community management; investigación en comunicación; relaciones públicas.","hab":"Curiosidad, capacidad de escritura y expresión oral, interés por los medios y la sociedad, creatividad, pensamiento crítico.","amb":"Medios de comunicación, agencias, áreas de comunicación de empresas y organismos, productoras, freelancing.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":4},{"mn":"TPE","id":"UNNE-055","u":"UNNE","f":"Facultad de Humanidades","n":"Tecnicatura en Periodismo","t":"Pregrado","d":"3 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación práctica en periodismo gráfico, radial, televisivo y digital, técnicas de entrevista, redacción y producción de noticias.","perfil":"Técnico capacitado para producir contenidos periodísticos en distintos soportes.","act":"Redacción de noticias; cobertura periodística; producción radial y televisiva; periodismo digital; reporterismo.","hab":"Curiosidad, agilidad para escribir, interés por la actualidad, capacidad de investigación y comunicación.","amb":"Medios de comunicación, portales digitales, productoras, áreas de prensa, freelancing.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":4},{"mn":"ICV","id":"UNNE-056","u":"UNNE","f":"Facultad de Ingeniería","n":"Ingeniería Civil","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en estructuras, hidráulica, geotecnia, caminos, construcciones, materiales, cálculo estructural y gestión de obras. Incluye proyectos y prácticas.","perfil":"Ingeniero capaz de proyectar, dirigir y gestionar obras de infraestructura civil (edificios, caminos, puentes, obras hidráulicas).","act":"Diseño estructural; dirección de obras; proyectos de infraestructura; estudios de suelos; gestión de proyectos de construcción.","hab":"Pensamiento técnico y espacial, interés por la construcción y la infraestructura, capacidad de cálculo, liderazgo de obras.","amb":"Constructoras, estudios de ingeniería, organismos públicos de obras, consultoras, ejercicio independiente.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":3},{"mn":"IEM","id":"UNNE-057","u":"UNNE","f":"Facultad de Ingeniería","n":"Ingeniería Electromecánica","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en mecánica, electricidad, máquinas térmicas y eléctricas, automatización, mantenimiento industrial y diseño de sistemas electromecánicos.","perfil":"Ingeniero capaz de diseñar, operar y mantener sistemas que integran componentes mecánicos y eléctricos en la industria.","act":"Diseño de sistemas electromecánicos; mantenimiento industrial; automatización; gestión de plantas; proyectos de instalaciones.","hab":"Interés por las máquinas y los sistemas, pensamiento técnico, capacidad de integración multidisciplinaria, resolución de problemas prácticos.","amb":"Industrias manufactureras, empresas de mantenimiento, automatización, generación de energía, consultoras.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":2},{"mn":"IME","id":"UNNE-058","u":"UNNE","f":"Facultad de Ingeniería","n":"Ingeniería Mecánica","t":"Grado","d":"5 años","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en mecánica de sólidos y fluidos, diseño de máquinas, termodinámica, materiales, fabricación y mantenimiento mecánico. Incluye laboratorio y proyectos.","perfil":"Ingeniero capaz de diseñar, fabricar y mantener máquinas y sistemas mecánicos.","act":"Diseño de máquinas y componentes; proyectos de instalaciones térmicas y mecánicas; mantenimiento; fabricación; investigación aplicada.","hab":"Interés por cómo funcionan las máquinas, pensamiento técnico y espacial, capacidad de cálculo y diseño, resolución de problemas.","amb":"Industria metalmecánica, automotriz, energía, empresas de diseño y fabricación, mantenimiento industrial, consultoras.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":2},{"mn":"MD","id":"UNNE-059","u":"UNNE","f":"Facultad de Medicina","n":"Medicina","t":"Grado","d":"6 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en ciencias básicas (anatomía, fisiología, bioquímica), clínicas (medicina interna, cirugía, pediatría, ginecología, etc.), salud pública y práctica hospitalaria. Incluye internado y rotaciones.","perfil":"Médico capaz de diagnosticar, tratar y prevenir enfermedades, y de ejercer la medicina con responsabilidad ética y social.","act":"Atención médica; diagnóstico y tratamiento; prevención; investigación clínica; salud pública; especialización posterior.","hab":"Vocación de servicio, interés por la salud humana, capacidad de observación clínica, empatía, resistencia al estudio intensivo y al trabajo hospitalario.","amb":"Hospitales y centros de salud, consultorios, organismos de salud pública, investigación, docencia, ejercicio privado.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"ENF","id":"UNNE-060","u":"UNNE","f":"Facultad de Medicina","n":"Licenciatura en Enfermería","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en cuidados de enfermería, anatomía y fisiología, farmacología, salud pública, ética profesional y práctica clínica en distintos niveles de atención.","perfil":"Licenciado en Enfermería capaz de brindar cuidados integrales de salud, gestionar servicios de enfermería y participar en equipos de salud.","act":"Cuidados de enfermería; gestión de servicios; educación para la salud; investigación en enfermería; atención primaria y hospitalaria.","hab":"Vocación de cuidado, empatía, responsabilidad, capacidad de trabajo en equipo, interés por la salud de las personas.","amb":"Hospitales, centros de salud, atención domiciliaria, organismos de salud pública, docencia, investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"KIN","id":"UNNE-061","u":"UNNE","f":"Facultad de Medicina","n":"Licenciatura en Kinesiología y Fisiatría","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en anatomía, fisiología, biomecánica, técnicas kinesiológicas, rehabilitación, agentes físicos y práctica clínica en distintas patologías.","perfil":"Kinesiólogo capaz de evaluar, tratar y rehabilitar disfunciones del movimiento y del sistema musculoesquelético.","act":"Evaluación y tratamiento kinesiológico; rehabilitación; prevención de lesiones; trabajo en equipos de salud; investigación.","hab":"Interés por el movimiento y el cuerpo humano, capacidad manual y de observación, empatía, vocación de ayuda.","amb":"Clínicas y consultorios de kinesiología, hospitales, centros de rehabilitación, deportes, atención domiciliaria.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"ODO","id":"UNNE-062","u":"UNNE","f":"Facultad de Odontología","n":"Odontología","t":"Grado","d":"5 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en anatomía y fisiología bucal, operatoria dental, endodoncia, periodoncia, cirugía bucomaxilofacial, ortodoncia, prótesis y práctica clínica.","perfil":"Odontólogo capaz de diagnosticar, prevenir y tratar enfermedades de la cavidad bucal y del sistema estomatognático.","act":"Atención odontológica; prevención; tratamientos restauradores y quirúrgicos; rehabilitación oral; salud pública bucal.","hab":"Precisión manual, interés por la salud bucal, vocación de servicio, capacidad de trabajo clínico detallado, empatía.","amb":"Consultorios odontológicos, hospitales, obras sociales, organismos de salud pública, ejercicio privado, docencia.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"TGS","id":"UNNE-063","u":"UNNE","f":"Facultad de Odontología","n":"Tecnicatura Universitaria en Gestión de Instituciones Universitarias del Área de la Salud","t":"Pregrado","d":"2 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en gestión universitaria, administración de instituciones de salud, normativa, gestión de recursos y procesos administrativos en el ámbito universitario de la salud.","perfil":"Técnico capacitado para apoyar la gestión administrativa y organizacional de instituciones universitarias del área de la salud.","act":"Gestión administrativa; apoyo a la organización de servicios; gestión de recursos; soporte a procesos académicos y administrativos.","hab":"Organización, interés por la gestión institucional, capacidad administrativa, trabajo en equipos de salud y educación.","amb":"Universidades (áreas de gestión), hospitales universitarios, instituciones de educación superior en salud.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":6},{"mn":"CR","id":"UNNE-064","u":"UNNE","f":"Instituto de Ciencias Criminalísticas y Criminología","n":"Licenciatura en Criminalística","t":"Grado","d":"4 años","m":"Presencial","s":"Corrientes Capital","plan":"Formación en criminalística, medicina legal, balística, documentología, papiloscopía, química forense, derecho penal y técnicas de investigación criminal.","perfil":"Criminalista capaz de aplicar métodos científicos al análisis de evidencias en el marco de investigaciones judiciales.","act":"Análisis de evidencias; peritajes criminalísticos; trabajo en escenas del hecho; informes periciales; apoyo a la investigación judicial.","hab":"Rigor científico, atención al detalle, interés por la investigación y la justicia, capacidad analítica, ética profesional.","amb":"Fuerzas de seguridad, poder judicial, laboratorios forenses, peritajes privados, organismos de investigación.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"SEG","id":"UNNE-065","u":"UNNE","f":"Instituto de Ciencias Criminalísticas y Criminología","n":"Licenciatura en Seguridad Pública y Ciudadana","t":"Ciclo de complementación","d":"1 año y medio","m":"Presencial","s":"Corrientes Capital","plan":"Ciclo de complementación orientado a políticas de seguridad, gestión de la seguridad pública, prevención del delito, derechos humanos y gestión institucional de la seguridad.","perfil":"Profesional capaz de analizar, diseñar y gestionar políticas y estrategias de seguridad pública y ciudadana.","act":"Diseño de políticas de seguridad; gestión institucional; análisis de problemáticas de seguridad; prevención; coordinación interinstitucional.","hab":"Interés por la seguridad y la convivencia, capacidad de análisis social, visión estratégica, liderazgo institucional.","amb":"Fuerzas de seguridad, organismos de seguridad pública, gobiernos locales y provinciales, consultorías en seguridad.","fu":"https://www.unne.edu.ar/estudiar/facultades/ofertas-academicas-de-grado/","a":9},{"mn":"UQU","id":"UTNFRRE-001","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Ingeniería Química","t":"Grado","d":"Por verificar en plan oficial","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en química, operaciones unitarias, ingeniería de las reacciones, procesos industriales, control de procesos, termodinámica y diseño de plantas. Incluye laboratorio y proyectos.","perfil":"Ingeniero capaz de diseñar, operar y optimizar procesos químicos e industriales de transformación de la materia.","act":"Diseño de procesos y plantas; operación y control de procesos; optimización; investigación y desarrollo; gestión de calidad y seguridad industrial.","hab":"Interés por los procesos de transformación, pensamiento analítico y sistémico, capacidad de cálculo, trabajo interdisciplinario.","amb":"Industria química, petroquímica, alimentos, farmacéutica, papel, empresas de ingeniería de procesos, I+D.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":2},{"mn":"UEM","id":"UTNFRRE-002","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Ingeniería Electromecánica","t":"Grado","d":"Por verificar en plan oficial","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en mecánica, electricidad, electrónica industrial, automatización, máquinas eléctricas y térmicas, mantenimiento y gestión industrial.","perfil":"Ingeniero orientado al diseño, operación y mantenimiento de sistemas electromecánicos en entornos industriales.","act":"Proyectos electromecánicos; mantenimiento industrial; automatización; gestión de plantas; diseño de instalaciones.","hab":"Interés por la tecnología industrial, pensamiento técnico, capacidad de integración de sistemas, resolución de problemas prácticos.","amb":"Industrias, empresas de mantenimiento y automatización, generación de energía, consultoras de ingeniería.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":2},{"mn":"UAR","id":"UTNFRRE-003","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Licenciatura en Administración Rural","t":"Grado","d":"Por verificar en plan oficial","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en administración de empresas agropecuarias, economía agraria, comercialización de productos agropecuarios, gestión de la producción y herramientas de gestión rural.","perfil":"Profesional capaz de administrar y gestionar empresas y establecimientos agropecuarios de manera eficiente.","act":"Administración de empresas rurales; gestión comercial y financiera; planificación productiva; asesoramiento en gestión agropecuaria.","hab":"Interés por el agro y la gestión, capacidad de organización, visión de negocios aplicados al sector rural.","amb":"Establecimientos agropecuarios, cooperativas, empresas de insumos y servicios, consultorías, organismos del sector.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":7},{"mn":"USI","id":"UTNFRRE-004","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Ingeniería en Sistemas de Información","t":"Grado","d":"Por verificar en plan oficial","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación en análisis y diseño de sistemas, programación, bases de datos, ingeniería de software, redes, seguridad, gestión de proyectos de software y arquitectura de sistemas.","perfil":"Ingeniero capaz de analizar, diseñar, desarrollar y gestionar sistemas de información y soluciones de software para organizaciones.","act":"Análisis y diseño de sistemas; desarrollo de software; gestión de proyectos de TI; arquitectura de sistemas; consultoría en sistemas.","hab":"Lógica, pensamiento sistémico, interés por la tecnología y su aplicación organizacional, capacidad de análisis y resolución de problemas.","amb":"Empresas de software, departamentos de sistemas, consultoras de TI, industria, organismos públicos, startups.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":0},{"mn":"UMT","id":"UTNFRRE-005","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Ingeniería en Mecatrónica","t":"Grado","d":"Por verificar en plan oficial","m":"Presencial","s":"Resistencia, Chaco","plan":"Formación interdisciplinaria en mecánica, electrónica, control automático, robótica, programación de sistemas embebidos y diseño de sistemas mecatrónicos.","perfil":"Ingeniero capaz de diseñar e integrar sistemas que combinan mecánica, electrónica y control (robótica, automatización avanzada).","act":"Diseño de sistemas mecatrónicos; robótica; automatización industrial; desarrollo de productos inteligentes; integración de sistemas.","hab":"Interés por la robótica y la automatización, pensamiento interdisciplinario, creatividad técnica, capacidad de integración de tecnologías.","amb":"Industria automotriz y manufacturera, empresas de automatización y robótica, I+D, empresas de producto tecnológico.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":1},{"mn":"UTE","id":"UTNFRRE-006","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Ciclo de Licenciatura en Tecnología Educativa","t":"Ciclo de complementación","d":"Por verificar en plan oficial","m":"Por verificar","s":"Resistencia, Chaco","plan":"Ciclo de complementación orientado a la integración de tecnologías en la educación, diseño de materiales digitales, entornos virtuales de aprendizaje y gestión de la tecnología educativa.","perfil":"Profesional capaz de diseñar, implementar y gestionar propuestas educativas mediadas por tecnología.","act":"Diseño de materiales educativos digitales; gestión de entornos virtuales; capacitación docente en TIC; proyectos de tecnología educativa.","hab":"Interés por la educación y la tecnología, capacidad de diseño, creatividad, visión pedagógica y técnica.","amb":"Instituciones educativas, áreas de educación a distancia, organismos de educación, empresas de e-learning, proyectos educativos.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":10},{"mn":"UPR","id":"UTNFRRE-007","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Tecnicatura Universitaria en Programación","t":"Pregrado","d":"Por verificar en plan oficial","m":"Por verificar","s":"Resistencia, Chaco","plan":"Formación práctica en lenguajes de programación, algoritmos, bases de datos, desarrollo web y de aplicaciones, y fundamentos de la ingeniería de software.","perfil":"Técnico programador capaz de desarrollar y mantener aplicaciones de software.","act":"Programación de aplicaciones; desarrollo web; mantenimiento de software; testing; soporte al desarrollo.","hab":"Lógica, interés por la programación, capacidad de aprendizaje de lenguajes y herramientas, resolución de problemas.","amb":"Empresas de software, departamentos de sistemas, startups, freelancing, organismos públicos.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":0},{"mn":"UTM","id":"UTNFRRE-008","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Tecnicatura Universitaria en Mecatrónica","t":"Pregrado","d":"Por verificar en plan oficial","m":"Por verificar","s":"Resistencia, Chaco","plan":"Formación técnica en mecánica, electrónica, control, robótica básica y sistemas automatizados. Orientada a la práctica y la operación de sistemas mecatrónicos.","perfil":"Técnico capaz de instalar, operar y mantener sistemas mecatrónicos y de automatización.","act":"Instalación y mantenimiento de sistemas automatizados; operación de equipos mecatrónicos; soporte técnico en automatización y robótica.","hab":"Interés por la automatización y la robótica, habilidad técnica práctica, resolución de problemas en sistemas integrados.","amb":"Industrias con automatización, empresas de mantenimiento, automatización industrial, talleres técnicos.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":1},{"mn":"URE","id":"UTNFRRE-009","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Tecnicatura Universitaria en Operaciones y Mantenimiento de Redes Eléctricas","t":"Pregrado","d":"Por verificar en plan oficial","m":"Por verificar","s":"Resistencia, Chaco","plan":"Formación técnica en redes de distribución eléctrica, operación, mantenimiento, seguridad eléctrica y sistemas de potencia. Orientada a la práctica en el sector eléctrico.","perfil":"Técnico capacitado para operar y mantener redes y sistemas de distribución eléctrica.","act":"Operación de redes eléctricas; mantenimiento preventivo y correctivo; detección de fallas; trabajo en equipos de distribución eléctrica.","hab":"Interés por la electricidad y las redes, trabajo técnico de campo, rigor en normas de seguridad, capacidad de diagnóstico.","amb":"Empresas de distribución eléctrica, cooperativas eléctricas, empresas de mantenimiento de redes, organismos del sector energético.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":1},{"mn":"ULO","id":"UTNFRRE-010","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Tecnicatura Universitaria en Logística","t":"Pregrado","d":"Por verificar en plan oficial","m":"Por verificar","s":"Resistencia, Chaco","plan":"Formación en gestión de la cadena de suministro, almacenamiento, transporte, distribución, comercio exterior básico y herramientas de gestión logística.","perfil":"Técnico capaz de gestionar operaciones logísticas y de cadena de suministro en empresas.","act":"Gestión de almacenes; planificación de transporte y distribución; control de inventarios; soporte a la cadena de suministro; operaciones de comercio exterior.","hab":"Organización, interés por los flujos de materiales e información, capacidad de planificación, atención a la eficiencia.","amb":"Empresas de logística y transporte, industrias (áreas de logística), operadores logísticos, comercio exterior, retail.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":2},{"mn":"UPD","id":"UTNFRRE-011","u":"UTN FRRe","f":"Facultad Regional Resistencia","n":"Tecnicatura Universitaria en Programación a Distancia","t":"Pregrado","d":"Por verificar en plan oficial","m":"A distancia","s":"Resistencia, Chaco","plan":"Formación a distancia en programación, algoritmos, bases de datos, desarrollo de aplicaciones y fundamentos de software. Orientada a la práctica del desarrollo.","perfil":"Técnico programador capaz de desarrollar aplicaciones de software, con formación adquirida en modalidad a distancia.","act":"Programación de aplicaciones; desarrollo web y de software; mantenimiento de sistemas; trabajo remoto en equipos de desarrollo.","hab":"Lógica, autonomía en el aprendizaje, interés por la programación, capacidad de trabajo remoto y organización personal.","amb":"Empresas de software, departamentos de sistemas, freelancing, trabajo remoto, startups, organismos públicos.","fu":"https://frre.utn.edu.ar/carreras/Carreras_de_Grado/ (grado) / https://frre.utn.edu.ar/carreras/Tecnicaturas/ (tecnicaturas)","a":0}],"areas":[{"n":"Informática y desarrollo de software","lema":"Te mueven la lógica, la tecnología y crear cosas que antes no existían.","msg":"Dentro de 10 años, casi todas las empresas y organismos van a depender del software y de los datos. Tus respuestas muestran interés por construir y entender sistemas, un camino con mucha salida laboral en la región y también a distancia, para cualquier lugar del mundo.","ids":["APU","LSI","USI","UPR","UPD"]},{"n":"Electrónica, electricidad y automatización","lema":"Te interesa cómo funcionan la electricidad, los circuitos y las máquinas inteligentes.","msg":"La energía, la automatización y la electrónica sostienen la industria y la vida cotidiana. Con estas respuestas podrías ser quien diseñe, programe o mantenga los sistemas que hacen que todo funcione, desde una subestación hasta un robot.","ids":["IET","IEL","UMT","UTM","URE"]},{"n":"Ingeniería mecánica, industria y producción","lema":"Te gusta entender cómo funcionan las máquinas y cómo se produce a gran escala.","msg":"Las fábricas, las plantas de procesos y las cadenas logísticas necesitan gente que combine cálculo, criterio técnico y organización. Tus respuestas apuntan a un perfil que mejora cómo se fabrican y se mueven las cosas.","ids":["IME","IEM","UEM","IIN","ULO","UQU"]},{"n":"Arquitectura, diseño y construcción","lema":"Imaginás, dibujás y proyectás: te atrae dar forma a lo que otros van a habitar, usar o mirar.","msg":"Diseñar espacios, obras, productos y piezas visuales es modelar el entorno en el que vivimos. Tus respuestas combinan creatividad con técnica, y podrías dejar tu marca en una ciudad, un producto o una marca.","ids":["AR","DI","DG","TDM","ICV","IAM"]},{"n":"Arte, cultura y comunicación","lema":"Te importan la creatividad, la cultura y contar lo que pasa.","msg":"Crear, difundir y comunicar le da identidad a una comunidad. Tus respuestas muestran un perfil expresivo y comprometido con la cultura: podrías producir arte, gestionar proyectos culturales o informar desde los medios.","ids":["AC","TGC","LGC","LCS","TPE"]},{"n":"Ciencias exactas y naturales","lema":"Te mueve la curiosidad por entender cómo funcionan el universo, la materia y la vida.","msg":"La ciencia básica es la base de toda innovación. Tus respuestas muestran un perfil investigador, con paciencia y rigor: es un camino que lleva a la investigación, la docencia universitaria o el trabajo en laboratorios y organismos científicos.","ids":["LMA","LFI","LQU","LBI"]},{"n":"Ciencias de la salud","lema":"Te mueven el cuidado de las personas y la vocación de servicio.","msg":"Son carreras exigentes, pero con un impacto muy directo en la vida de los demás. Tus respuestas muestran interés genuino por la salud: podrías cuidar, diagnosticar, rehabilitar o gestionar servicios que mejoren el bienestar de tu comunidad.","ids":["MD","BQ","ENF","KIN","ODO","TGS"]},{"n":"Agro, animales y naturaleza","lema":"Te atraen el campo, los animales y la producción que sostiene a la región.","msg":"La producción agropecuaria es clave para la economía de Corrientes y el Chaco. Tus respuestas muestran afinidad con el trabajo en el territorio y con la producción de alimentos, ya sea desde la técnica, la sanidad animal o la gestión.","ids":["IAG","TAP","VET","LAG","UAR","TMA"]},{"n":"Economía, administración y negocios","lema":"Ves oportunidades donde otros ven números, y sabés organizar para que las cosas pasen.","msg":"Las empresas, el comercio y el turismo necesitan gente con visión y criterio. Tus respuestas muestran un perfil de gestión: podrías dirigir tu propio proyecto o asesorar a quienes hacen crecer la economía local.","ids":["CP","LAD","LEC","TAE","LCE","LTU","TTU"]},{"n":"Derecho, seguridad y relaciones laborales","lema":"Buscás lo justo, argumentás con convicción y te interesa cómo se ordena la sociedad.","msg":"La justicia, la seguridad y el trabajo necesitan profesionales éticos y rigurosos. Tus respuestas muestran pensamiento crítico y sentido de justicia: podrías defender derechos, mediar en conflictos o aportar pruebas y políticas que marquen la diferencia.","ids":["AB","MAR","TRL","LRL","CR","SEG"]},{"n":"Educación y enseñanza","lema":"Te importan las personas, el conocimiento y ayudar a otros a aprender.","msg":"Educar transforma sociedades enteras. Tus respuestas muestran un perfil que inspira y acompaña: podrías enseñar, diseñar propuestas educativas o mejorar la forma en que aprende tu comunidad.","ids":["PCE","LED","PEI","LEI","UTE","PMA","PFI","PQA","PBI"]},{"n":"Humanidades y ciencias sociales","lema":"Te interesan las ideas, la historia, el lenguaje y el territorio.","msg":"Las humanidades enseñan a pensar, interpretar y conservar la memoria de una sociedad. Tus respuestas muestran curiosidad profunda y capacidad de análisis: es un camino que conduce a la investigación, la docencia, la gestión de la información y el patrimonio.","ids":["LFL","PFL","LGE","PGE","LHI","PHI","LLE","PLE","LCI","ARC","BIB"]}],"p1":[{"id":"p1_0","part":1,"a":0,"q":"¿Cuánto te atrae trabajar con computadoras: programar, crear software y manejar sistemas informáticos?","w":{"APU":3,"LSI":3,"USI":3,"UPR":3,"UPD":3,"LMA":1,"IET":1,"UMT":1,"UTM":1}},{"id":"p1_1","part":1,"a":1,"q":"¿Cuánto te atrae la electrónica, la electricidad, la energía y la automatización de equipos?","w":{"IET":3,"IEL":3,"UMT":3,"UTM":3,"URE":3,"IEM":1,"UEM":1}},{"id":"p1_2","part":1,"a":2,"q":"¿Cuánto te atrae la mecánica, las máquinas y la organización de la producción industrial?","w":{"IME":3,"IEM":3,"UEM":3,"IIN":3,"ULO":3,"UQU":3,"UMT":1,"UTM":1}},{"id":"p1_3","part":1,"a":3,"q":"¿Cuánto te atrae diseñar y construir: edificios, ciudades, objetos, piezas gráficas o contenido audiovisual?","w":{"AR":3,"DI":3,"DG":3,"TDM":3,"ICV":3,"IAM":3}},{"id":"p1_4","part":1,"a":4,"q":"¿Cuánto te atrae el arte, la cultura y la comunicación: crear, difundir y contar historias?","w":{"AC":3,"TGC":3,"LGC":3,"LCS":3,"TPE":3,"TDM":1}},{"id":"p1_5","part":1,"a":5,"q":"¿Cuánto te atrae la ciencia básica: matemática, física, química o biología, y la investigación?","w":{"LMA":3,"LFI":3,"LQU":3,"LBI":3,"PMA":1,"PFI":1,"PQA":1,"PBI":1,"BQ":1}},{"id":"p1_6","part":1,"a":6,"q":"¿Cuánto te atrae el cuidado de la salud de las personas?","w":{"MD":3,"BQ":3,"ENF":3,"KIN":3,"ODO":3,"TGS":3,"VET":1}},{"id":"p1_7","part":1,"a":7,"q":"¿Cuánto te atrae el campo, los animales y la naturaleza como lugar de trabajo?","w":{"IAG":3,"TAP":3,"VET":3,"LAG":3,"UAR":3,"TMA":3,"LBI":1,"PBI":1}},{"id":"p1_8","part":1,"a":8,"q":"¿Cuánto te atrae el mundo de los negocios: economía, administración, finanzas o turismo?","w":{"CP":3,"LAD":3,"LEC":3,"TAE":3,"LCE":3,"LTU":3,"TTU":3,"UAR":1,"LAG":1}},{"id":"p1_9","part":1,"a":9,"q":"¿Cuánto te atrae el mundo de las leyes, la justicia, la seguridad y los derechos de los trabajadores?","w":{"AB":3,"MAR":3,"TRL":3,"LRL":3,"CR":3,"SEG":3}},{"id":"p1_10","part":1,"a":10,"q":"¿Cuánto te atrae enseñar y la educación como camino profesional?","w":{"PCE":3,"LED":3,"PEI":3,"LEI":3,"UTE":3,"PMA":3,"PFI":3,"PQA":3,"PBI":3,"PFL":1,"PGE":1,"PHI":1,"PLE":1}},{"id":"p1_11","part":1,"a":11,"q":"¿Cuánto te atrae el estudio de las humanidades: historia, letras, filosofía, geografía o el trabajo con libros y archivos?","w":{"LFL":3,"PFL":3,"LGE":3,"PGE":3,"LHI":3,"PHI":3,"LLE":3,"PLE":3,"LCI":3,"ARC":3,"BIB":3}}],"esp":{"0":[{"id":"a0_0","part":2,"a":0,"q":"¿Cuánto te atrae escribir código para crear aplicaciones, sitios web o videojuegos?","w":{"APU":3,"UPR":3,"UPD":3,"USI":2,"LSI":2}},{"id":"a0_1","part":2,"a":0,"q":"¿Cuánto te interesa diseñar la arquitectura de sistemas grandes, que usan muchas personas o empresas al mismo tiempo?","w":{"USI":3,"LSI":3,"APU":1}},{"id":"a0_2","part":2,"a":0,"q":"¿Cuánto te atrae administrar bases de datos, redes y servidores de una organización?","w":{"USI":3,"LSI":2,"APU":2,"UPR":1,"UPD":1}},{"id":"a0_3","part":2,"a":0,"q":"¿Cuánto te interesa la inteligencia artificial, el análisis de datos y los modelos de simulación?","w":{"LSI":3,"USI":2,"LMA":1}},{"id":"a0_4","part":2,"a":0,"q":"¿Cuánto te atrae liderar proyectos tecnológicos y coordinar equipos de desarrollo?","w":{"USI":3,"LSI":2}},{"id":"a0_5","part":2,"a":0,"q":"¿Qué tan cómodo/a te sentirías estudiando de manera virtual, a tu ritmo, sin cursar todos los días en un aula?","w":{"UPD":3}}],"1":[{"id":"a1_0","part":2,"a":1,"q":"¿Cuánto te gusta armar circuitos y diseñar dispositivos electrónicos, como placas, sensores o equipos de comunicaciones?","w":{"IET":3,"UMT":2,"UTM":2,"IEL":1}},{"id":"a1_1","part":2,"a":1,"q":"¿Cuánto te atrae programar microcontroladores y sistemas embebidos, como los que tienen un electrodoméstico o un auto?","w":{"IET":3,"UMT":3,"UTM":2}},{"id":"a1_2","part":2,"a":1,"q":"¿Cuánto te atrae la robótica y la automatización de procesos con PLC y sistemas de control?","w":{"UMT":3,"UTM":3,"IET":2,"IEL":1}},{"id":"a1_3","part":2,"a":1,"q":"¿Cuánto te interesa cómo se genera, se transporta y se distribuye la energía eléctrica?","w":{"IEL":3,"URE":3}},{"id":"a1_4","part":2,"a":1,"q":"¿Cuánto te atrae el mantenimiento y la operación de líneas, subestaciones y redes eléctricas en terreno?","w":{"URE":3,"IEL":2}},{"id":"a1_5","part":2,"a":1,"q":"¿Cuánto te interesa diseñar proyectos de instalaciones eléctricas y de energía para industrias, edificios o ciudades?","w":{"IEL":3,"URE":1,"IET":1}}],"2":[{"id":"a2_0","part":2,"a":2,"q":"¿Cuánto te atrae diseñar y calcular máquinas, motores y piezas mecánicas?","w":{"IME":3,"IEM":2,"UEM":2}},{"id":"a2_1","part":2,"a":2,"q":"¿Cuánto te interesa la termodinámica, los fluidos y cómo se transforma la energía en calor y movimiento?","w":{"IME":3,"IEM":2,"UEM":2,"UQU":2}},{"id":"a2_2","part":2,"a":2,"q":"¿Cuánto te atrae mantener y optimizar el funcionamiento de maquinaria e instalaciones industriales, como motores, bombas o sistemas automáticos?","w":{"IEM":3,"UEM":3,"IME":1}},{"id":"a2_3","part":2,"a":2,"q":"¿Cuánto te gusta organizar cómo se produce algo: mejorar procesos, reducir costos y coordinar toda la cadena de producción?","w":{"IIN":3,"ULO":2,"UQU":1}},{"id":"a2_4","part":2,"a":2,"q":"¿Cuánto te atrae planificar el transporte, el almacenamiento y la distribución de mercaderías?","w":{"ULO":3,"IIN":2}},{"id":"a2_5","part":2,"a":2,"q":"¿Cuánto te interesa diseñar procesos químicos que transformen materias primas en productos útiles, como combustibles, alimentos o plásticos?","w":{"UQU":3,"IIN":1}},{"id":"a2_6","part":2,"a":2,"q":"¿Cuánto te importan la seguridad industrial, el control de calidad y el cuidado del ambiente en una fábrica?","w":{"UQU":2,"IIN":2,"IEM":1,"UEM":1,"ULO":1}}],"3":[{"id":"a3_0","part":2,"a":3,"q":"¿Cuánto te gusta imaginar y diseñar edificios, viviendas o ciudades?","w":{"AR":3,"ICV":1}},{"id":"a3_1","part":2,"a":3,"q":"¿Cuánto te atrae calcular estructuras y dirigir la construcción de puentes, rutas, edificios o represas?","w":{"ICV":3,"AR":2}},{"id":"a3_2","part":2,"a":3,"q":"¿Cuánto te interesa medir terrenos con instrumentos de precisión, hacer mapas y usar GPS o sistemas de información geográfica?","w":{"IAM":3,"ICV":1}},{"id":"a3_3","part":2,"a":3,"q":"¿Cuánto te gusta diseñar objetos, muebles o productos y hacer maquetas o prototipos?","w":{"DI":3,"AR":1}},{"id":"a3_4","part":2,"a":3,"q":"¿Cuánto te atrae crear identidades de marca, afiches, páginas web o aplicaciones desde lo visual?","w":{"DG":3,"TDM":2}},{"id":"a3_5","part":2,"a":3,"q":"¿Cuánto te gusta producir y editar video, sonido, animaciones o contenido multimedia?","w":{"TDM":3,"DG":1}},{"id":"a3_6","part":2,"a":3,"q":"¿Cuánto te interesa conocer los materiales, la ergonomía y cómo se fabrica un producto en serie?","w":{"DI":3,"AR":1}}],"4":[{"id":"a4_0","part":2,"a":4,"q":"¿Cuánto te atrae crear o producir arte: cine, teatro, música o artes visuales?","w":{"AC":3,"TDM":1}},{"id":"a4_1","part":2,"a":4,"q":"¿Cuánto te interesa analizar obras de arte, películas o teatro con mirada crítica y teórica?","w":{"AC":3,"LGC":1}},{"id":"a4_2","part":2,"a":4,"q":"¿Cuánto te gusta organizar eventos, festivales, muestras o museos?","w":{"TGC":3,"LGC":3,"AC":1}},{"id":"a4_3","part":2,"a":4,"q":"¿Cuánto te interesa diseñar políticas y programas culturales que impulsen la identidad y el patrimonio de tu región?","w":{"LGC":3,"TGC":2}},{"id":"a4_4","part":2,"a":4,"q":"¿Cuánto te atrae escribir, investigar y contar lo que pasa: noticias, entrevistas, reportajes o crónicas?","w":{"TPE":3,"LCS":3}},{"id":"a4_5","part":2,"a":4,"q":"¿Cuánto te interesa comunicar en nombre de una organización: manejar redes, prensa, imagen institucional y campañas?","w":{"LCS":3,"TPE":1}},{"id":"a4_6","part":2,"a":4,"q":"¿Cuánto te atrae trabajar en radio, televisión o medios digitales?","w":{"TPE":3,"LCS":2,"TDM":1}}],"5":[{"id":"a5_0","part":2,"a":5,"q":"¿Cuánto te atrae resolver problemas de matemática pura, demostrar teoremas y trabajar con modelos abstractos?","w":{"LMA":3,"LFI":1,"PMA":1}},{"id":"a5_1","part":2,"a":5,"q":"¿Cuánto te interesa entender las leyes de la física: la energía, la materia y el universo?","w":{"LFI":3,"LMA":1,"PFI":1}},{"id":"a5_2","part":2,"a":5,"q":"¿Cuánto te gusta trabajar en un laboratorio de química con reactivos, análisis y experimentos?","w":{"LQU":3,"BQ":1,"PQA":1}},{"id":"a5_3","part":2,"a":5,"q":"¿Cuánto te interesa estudiar seres vivos, ecosistemas y la conservación de la biodiversidad?","w":{"LBI":3,"PBI":1}},{"id":"a5_4","part":2,"a":5,"q":"¿Cuánto te atrae dedicar tu vida a investigar y generar conocimiento científico nuevo, aunque lleve años?","w":{"LMA":2,"LFI":2,"LQU":2,"LBI":2}},{"id":"a5_5","part":2,"a":5,"q":"¿Cuánto te interesa estudiar el ambiente: la contaminación, el clima y el uso de los recursos naturales?","w":{"LBI":2,"LQU":2,"LFI":1,"PQA":1}}],"6":[{"id":"a6_0","part":2,"a":6,"q":"¿Cuánto te interesa entender cómo funciona el cuerpo humano y cómo se diagnostican y se tratan las enfermedades?","w":{"MD":3,"ODO":2,"KIN":1,"ENF":1,"BQ":1}},{"id":"a6_1","part":2,"a":6,"q":"¿Cuánto te atrae cuidar a pacientes día a día: acompañarlos, controlarlos y asistirlos en su recuperación?","w":{"ENF":3,"MD":1,"KIN":1}},{"id":"a6_2","part":2,"a":6,"q":"¿Cuánto te atrae rehabilitar personas con lesiones o dificultades de movimiento mediante ejercicio y terapia física?","w":{"KIN":3}},{"id":"a6_3","part":2,"a":6,"q":"¿Cuánto te interesa la salud de la boca y los dientes, y hacer tratamientos odontológicos?","w":{"ODO":3}},{"id":"a6_4","part":2,"a":6,"q":"¿Cuánto te gusta analizar muestras de sangre, orina o cultivos para ayudar a diagnosticar enfermedades?","w":{"BQ":3,"MD":1}},{"id":"a6_5","part":2,"a":6,"q":"¿Cuánto te atrae la responsabilidad de tomar decisiones médicas urgentes, con guardias y emergencias?","w":{"MD":3,"ENF":2,"ODO":1}},{"id":"a6_6","part":2,"a":6,"q":"¿Cuánto te interesa gestionar la parte administrativa de un hospital, una clínica o una facultad de salud?","w":{"TGS":3}}],"7":[{"id":"a7_0","part":2,"a":7,"q":"¿Cuánto te atrae producir alimentos: cultivos, suelos, semillas y manejo del campo?","w":{"IAG":3,"TMA":1,"LAG":1}},{"id":"a7_1","part":2,"a":7,"q":"¿Cuánto te gusta criar, cuidar y curar animales?","w":{"VET":3,"TAP":1}},{"id":"a7_2","part":2,"a":7,"q":"¿Cuánto te interesa la cría de abejas y la producción de miel y otros productos de la colmena?","w":{"TAP":3}},{"id":"a7_3","part":2,"a":7,"q":"¿Cuánto te atrae trabajar con tractores, sembradoras y maquinaria agrícola?","w":{"TMA":3,"IAG":1}},{"id":"a7_4","part":2,"a":7,"q":"¿Cuánto te interesa administrar un establecimiento agropecuario: costos, ventas y planificación de la producción?","w":{"LAG":3,"UAR":3,"IAG":1}},{"id":"a7_5","part":2,"a":7,"q":"¿Cuánto te interesa proteger la salud pública previniendo enfermedades que pasan de los animales a las personas?","w":{"VET":3}},{"id":"a7_6","part":2,"a":7,"q":"¿Cuánto te atrae el desarrollo sustentable de las economías regionales y las cadenas agroindustriales?","w":{"UAR":3,"LAG":2,"IAG":1}}],"8":[{"id":"a8_0","part":2,"a":8,"q":"¿Cuánto te gusta trabajar con números: cuentas, costos y balances de una empresa?","w":{"CP":3,"TAE":1,"LAD":1,"LEC":1}},{"id":"a8_1","part":2,"a":8,"q":"¿Cuánto te atrae auditar y asesorar a empresas en temas impositivos y contables?","w":{"CP":3}},{"id":"a8_2","part":2,"a":8,"q":"¿Cuánto te interesa dirigir una empresa: organizar equipos, ventas, marketing y recursos?","w":{"LAD":3,"TAE":2,"CP":1,"LCE":1,"TTU":1}},{"id":"a8_3","part":2,"a":8,"q":"¿Cuánto te atrae tener tu propio negocio o pyme y tomar decisiones del día a día?","w":{"TAE":3,"LAD":1,"TTU":1,"CP":1}},{"id":"a8_4","part":2,"a":8,"q":"¿Cuánto te interesa analizar cómo funciona la economía: precios, inflación, mercados y políticas públicas?","w":{"LEC":3,"CP":1,"LAD":1}},{"id":"a8_5","part":2,"a":8,"q":"¿Cuánto te atrae el comercio internacional: importar, exportar, aduanas y negocios con otros países?","w":{"LCE":3,"LAD":1}},{"id":"a8_6","part":2,"a":8,"q":"¿Cuánto te atrae planificar viajes, hoteles y servicios para recibir turistas?","w":{"LTU":3,"TTU":3}},{"id":"a8_7","part":2,"a":8,"q":"¿Cuánto te interesa planificar el desarrollo turístico de una región cuidando su patrimonio y su ambiente?","w":{"LTU":3,"TTU":1}}],"9":[{"id":"a9_0","part":2,"a":9,"q":"¿Cuánto te gusta debatir, argumentar y defender una postura con razones?","w":{"AB":3}},{"id":"a9_1","part":2,"a":9,"q":"¿Cuánto te interesa estudiar las leyes y cómo se aplican para resolver conflictos entre las personas?","w":{"AB":3,"MAR":1,"LRL":1}},{"id":"a9_2","part":2,"a":9,"q":"¿Cuánto te atrae el mundo del trabajo: contratos, derechos de los trabajadores, selección de personal y conflictos laborales?","w":{"LRL":3,"TRL":3,"AB":1}},{"id":"a9_3","part":2,"a":9,"q":"¿Cuánto te interesa la compraventa de bienes, inmuebles y subastas?","w":{"MAR":3}},{"id":"a9_4","part":2,"a":9,"q":"¿Cuánto te atrae usar la ciencia para analizar la escena de un crimen: huellas, balística, documentos y otras pruebas?","w":{"CR":3}},{"id":"a9_5","part":2,"a":9,"q":"¿Cuánto te interesa diseñar estrategias de seguridad pública para prevenir el delito?","w":{"SEG":3,"CR":1}},{"id":"a9_6","part":2,"a":9,"q":"¿Cuánto te atrae la idea de llegar a ser juez, fiscal o defensor?","w":{"AB":3,"CR":1}}],"10":[{"id":"a10_0","part":2,"a":10,"q":"¿Cuánto te gusta explicar y enseñar a otras personas, y ver cómo aprenden?","w":{"PCE":3,"PMA":3,"PFI":3,"PQA":3,"PBI":3,"PEI":3}},{"id":"a10_1","part":2,"a":10,"q":"¿Cuánto te atrae trabajar con niños de 0 a 5 años y acompañar sus primeros aprendizajes?","w":{"PEI":3,"LEI":3}},{"id":"a10_2","part":2,"a":10,"q":"¿Cuánto te interesa enseñar matemática a adolescentes?","w":{"PMA":3}},{"id":"a10_3","part":2,"a":10,"q":"¿Cuánto te interesa enseñar física a adolescentes?","w":{"PFI":3}},{"id":"a10_4","part":2,"a":10,"q":"¿Cuánto te interesa enseñar química y temas de ambiente a adolescentes?","w":{"PQA":3}},{"id":"a10_5","part":2,"a":10,"q":"¿Cuánto te interesa enseñar biología a adolescentes?","w":{"PBI":3}},{"id":"a10_6","part":2,"a":10,"q":"¿Cuánto te atrae pensar cómo mejorar la educación: planes de estudio, políticas educativas, y cómo aprenden las personas?","w":{"LED":3,"PCE":2,"LEI":2,"UTE":1}},{"id":"a10_7","part":2,"a":10,"q":"¿Cuánto te atrae crear aulas virtuales, materiales digitales y propuestas de enseñanza con tecnología?","w":{"UTE":3,"LED":1}}],"11":[{"id":"a11_0","part":2,"a":11,"q":"¿Cuánto te atrae leer literatura, analizar textos y estudiar cómo funciona el lenguaje?","w":{"LLE":3,"PLE":3}},{"id":"a11_1","part":2,"a":11,"q":"¿Cuánto te interesa investigar el pasado: cómo se construyó la historia de tu región y del país?","w":{"LHI":3,"PHI":3,"ARC":1}},{"id":"a11_2","part":2,"a":11,"q":"¿Cuánto te interesa la filosofía: preguntarte por la ética, el conocimiento y el sentido de las cosas?","w":{"LFL":3,"PFL":3}},{"id":"a11_3","part":2,"a":11,"q":"¿Cuánto te atrae estudiar el territorio, los paisajes, las ciudades y cómo las personas usan el espacio?","w":{"LGE":3,"PGE":3}},{"id":"a11_4","part":2,"a":11,"q":"¿Cuánto te gusta organizar, clasificar y conservar documentos, archivos o libros?","w":{"LCI":3,"ARC":3,"BIB":3}},{"id":"a11_5","part":2,"a":11,"q":"¿Cuánto te atrae trabajar en bibliotecas: acercar la lectura, gestionar colecciones y servicios de información?","w":{"BIB":3,"LCI":2}},{"id":"a11_6","part":2,"a":11,"q":"¿Cuánto te atrae preservar documentos históricos y el patrimonio documental?","w":{"ARC":3,"LCI":2,"LHI":1}},{"id":"a11_7","part":2,"a":11,"q":"¿Cuánto te atrae enseñar lengua, historia, geografía o filosofía en la escuela secundaria?","w":{"PLE":3,"PHI":3,"PGE":3,"PFL":3}},{"id":"a11_8","part":2,"a":11,"q":"¿Cuánto te interesa investigar y escribir trabajos académicos propios en humanidades o ciencias sociales?","w":{"LFL":3,"LHI":3,"LLE":3,"LGE":3,"LCI":1}}]},"p3":[{"id":"p3_0","part":3,"q":"Dentro de 10 años, ¿qué tan importante es para vos poder trabajar a distancia, desde tu casa, para empresas de cualquier lugar?","w":{"APU":2,"LSI":2,"USI":2,"UPR":2,"UPD":3,"DG":2,"TDM":2,"LCS":1,"TPE":1,"LEC":1,"LMA":1,"LLE":1,"UTE":2}},{"id":"p3_1","part":3,"q":"¿Qué tan importante es para vos pasar gran parte de tus días al aire libre, en obras, en el campo o recorriendo el territorio?","w":{"ICV":2,"IAM":3,"IAG":3,"TMA":3,"TAP":2,"VET":2,"LAG":1,"UAR":1,"LBI":2,"PGE":1,"LGE":1,"AR":1}},{"id":"p3_2","part":3,"q":"¿Qué tan importante es para vos trabajar en el sector público, por ejemplo en juzgados, hospitales, escuelas u organismos del Estado?","w":{"AB":2,"CR":2,"SEG":3,"MD":1,"ENF":2,"KIN":1,"TGS":2,"PCE":2,"LED":2,"PEI":2,"LEI":2,"PMA":2,"PFI":2,"PQA":2,"PBI":2,"PFL":2,"PGE":2,"PHI":2,"PLE":2,"LGC":2,"TGC":2,"ARC":2,"BIB":2,"LCI":1,"LHI":1,"LEC":1,"TRL":1,"LRL":1}},{"id":"p3_3","part":3,"q":"¿Qué tan importante es para vos empezar a trabajar pronto, con una carrera corta de hasta 3 años?","w":{"TGC":3,"TTU":3,"TDM":3,"TAP":3,"TMA":3,"TRL":3,"APU":3,"TAE":3,"LAG":3,"MAR":3,"ARC":3,"BIB":3,"TPE":3,"TGS":3,"SEG":3,"UPR":3,"UTM":3,"URE":3,"ULO":3,"UPD":3}},{"id":"p3_4","part":3,"q":"¿Qué tan dispuesto/a estás a estudiar una carrera larga, de 5 años y medio o más, si la profesión te apasiona?","w":{"AR":3,"BQ":3,"VET":3,"AB":3,"MD":3}}]};
+  var CARRERAS = D.careers, AREAS = D.areas, P1 = D.p1, ESP = D.esp, P3 = D.p3;
+  var porMn = {};
+  CARRERAS.forEach(function (c) { porMn[c.mn] = c; });
 
   var ESCALA = [
-    { v:1, t:'Nada' },
-    { v:2, t:'Poco' },
-    { v:3, t:'Más o menos' },
-    { v:4, t:'Bastante' },
-    { v:5, t:'Mucho' }
+    { v: 1, t: 'Nada' }, { v: 2, t: 'Poco' }, { v: 3, t: 'Más o menos' }, { v: 4, t: 'Bastante' }, { v: 5, t: 'Mucho' }
   ];
-
-  // Preprocesar preguntas
-  var PREGUNTAS = ITEMS.map(function (it) {
-    var w = [];
-    it[2].split(/\s+/).forEach(function (tok) {
-      if (tok.indexOf('P:') === 0) {
-        // Peso de perfil: P:T2 → perfil T con peso 2
-        w.push({ tipo:'perfil', id: tok.slice(2, 3), p: parseInt(tok.slice(3), 10) });
-      } else {
-        // Peso de carrera: SI3 → id SI peso 3
-        var m = tok.match(/^([A-Z]+)(\d+)$/);
-        if (m) w.push({ tipo:'carrera', id: m[1], p: parseInt(m[2], 10) });
-      }
-    });
-    return { s: it[0], q: it[1], w: w };
-  });
+  var N_AREAS_EXPLORAR = 3;
+  var ESTIMADO_PARTE2 = 21;
 
   /* ---------- ESTADO ---------- */
   var tarjeta = document.getElementById('tarjeta');
@@ -623,10 +227,31 @@
   var barraRelleno = document.getElementById('barraRelleno');
   var progTexto = document.getElementById('progTexto');
   var progPct = document.getElementById('progPct');
-  var respuestas = [];
-  var actual = 0;
+
+  var respuestas = {};      // id de pregunta -> 1..5
+  var seq = [];             // secuencia actual de preguntas
+  var idx = 0;
+  var parte2Lista = false;  // true cuando ya se armó la parte 2
+  var areasElegidas = [];
   var bloqueado = false;
   var enPregunta = false;
+
+  /* ---------- UTILIDADES ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+  function enRango(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function pendiente(txt) { return /verificar/i.test(txt || ''); }
+  function fmtDur(c) { return pendiente(c.d) ? 'Duración a confirmar en el plan oficial' : c.d; }
+  function fmtMod(c) { return pendiente(c.m) ? 'Modalidad a confirmar' : c.m; }
+  function linksFuente(c) {
+    var urls = (c.fu || '').match(/https?:\/\/[^\s)]+/g) || [];
+    return urls.map(function (u) {
+      return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a>';
+    }).join('<br>');
+  }
 
   function cambiarPantalla(render, atras) {
     var previa = tarjeta.firstElementChild;
@@ -641,13 +266,28 @@
     }, previa ? 180 : 0);
   }
 
-  function actualizarProgreso(n) {
-    var total = PREGUNTAS.length;
-    var pct = Math.round((n / total) * 100);
+  function totalEstimado() {
+    return parte2Lista ? seq.length : P1.length + ESTIMADO_PARTE2 + P3.length;
+  }
+  function setProgreso(hechas, texto) {
+    var total = totalEstimado();
+    var pct = enRango(Math.round((hechas / total) * 100), 0, 100);
     barraRelleno.style.width = pct + '%';
     barra.setAttribute('aria-valuenow', pct);
-    progTexto.textContent = n < total ? 'Afirmación ' + (n + 1) + ' de ' + total : 'Listo';
+    progTexto.textContent = texto;
     progPct.textContent = pct + '%';
+  }
+  function progresoPregunta() {
+    var n1 = P1.length, n3 = P3.length, n2 = seq.length - n1 - n3, txt;
+    if (idx < n1) txt = 'Parte 1 de 3 · pregunta ' + (idx + 1) + ' de ' + n1;
+    else if (idx < n1 + n2) txt = 'Parte 2 de 3 · pregunta ' + (idx - n1 + 1) + ' de ' + n2;
+    else txt = 'Parte 3 de 3 · pregunta ' + (idx - n1 - n2 + 1) + ' de ' + n3;
+    setProgreso(idx, txt);
+  }
+  function etiquetaSeccion(q) {
+    if (q.part === 1) return 'Panorama general';
+    if (q.part === 2) return AREAS[q.a].n;
+    return 'Tu vida dentro de 10 años';
   }
 
   /* ---------- BIENVENIDA ---------- */
@@ -658,15 +298,20 @@
     d.className = 'pantalla bienvenida';
     d.innerHTML =
       '<h1>Test vocacional: ¿qué carrera encaja con vos?</h1>' +
-      '<p>Vas a ver una serie de actividades y situaciones. Para cada una, indicá del 1 al 5 cuánto te atrae o te interesa. Al final te mostramos qué carreras de la <strong>UNNE</strong> y la <strong>UTN Resistencia</strong> se parecen más a tus respuestas.</p>' +
+      '<p>Respondé del 1 al 5 cuánto te atrae cada actividad. Al final te mostramos qué carreras de la UNNE y de la UTN Resistencia se parecen más a tus respuestas, entre las ' + CARRERAS.length + ' de la zona.</p>' +
+      '<div class="como"><strong>El test tiene 3 partes:</strong><ol>' +
+        '<li><strong>Panorama general:</strong> ' + P1.length + ' preguntas rápidas sobre las grandes áreas.</li>' +
+        '<li><strong>Profundizamos:</strong> preguntas más específicas, solo de las ' + N_AREAS_EXPLORAR + ' áreas que más te interesaron.</li>' +
+        '<li><strong>Tu vida a 10 años:</strong> ' + P3.length + ' preguntas sobre el estilo de vida que buscás.</li>' +
+      '</ol></div>' +
       '<div class="como"><strong>Para que el resultado sea más preciso:</strong><ul>' +
         '<li>No hay respuestas correctas ni incorrectas.</li>' +
         '<li>Pensá en lo que te gustaría hacer dentro de 5 o 10 años, no solo en lo que sabés hacer hoy.</li>' +
         '<li>Usá toda la escala: si todo es "Mucho", el test no puede distinguir.</li>' +
       '</ul></div>' +
-      '<div class="chips"><span class="chip">' + PREGUNTAS.length + ' afirmaciones</span><span class="chip">Unos 5 minutos</span><span class="chip">' + CARRERAS.length + ' carreras de la zona</span></div>' +
-      '<button class="btn" id="btnInicio">Empezar el test</button>' +
-      '<p class="autor">Desarrollado por Dureco Ingenieria · Carreras UNNE y UTN FRRE · Uso educativo gratuito · Prohibida su comercialización sin autorización</p>';
+      '<div class="chips"><span class="chip">' + CARRERAS.length + ' carreras</span><span class="chip">Unos 5 minutos</span><span class="chip">Sin conexión a internet</span></div>' +
+      '<button class="btn" id="btnInicio">Empezar el test</button>';
+      '<p class="autor">Desarrollado por Dureco Ingenieria · Carreras UNNE y UTN FRRE · Uso educativo gratuito · Prohibida su comercialización sin autorización</p>';  
     tarjeta.appendChild(d);
     document.getElementById('btnInicio').addEventListener('click', iniciar);
   }
@@ -674,30 +319,33 @@
   function iniciar() {
     if (bloqueado) return;
     bloqueado = true;
-    respuestas = [];
-    actual = 0;
+    respuestas = {};
+    seq = P1.slice();
+    idx = 0;
+    parte2Lista = false;
+    areasElegidas = [];
     topbar.classList.add('visible');
-    actualizarProgreso(0);
     cambiarPantalla(mostrarPregunta, false);
   }
 
   /* ---------- PREGUNTAS ---------- */
   function mostrarPregunta() {
     enPregunta = true;
-    var p = PREGUNTAS[actual];
+    var q = seq[idx];
+    progresoPregunta();
     var d = document.createElement('div');
     d.className = 'pantalla';
-    var html = '<span class="seccion">' + SECCIONES[p.s] + '</span><h2>' + p.q + '</h2>' +
+    var html = '<span class="seccion">' + esc(etiquetaSeccion(q)) + '</span><h2>' + esc(q.q) + '</h2>' +
                '<div class="escala" role="radiogroup" aria-label="Escala de 1 a 5">';
     ESCALA.forEach(function (n) {
-      html += '<button type="button" class="nivel' + (respuestas[actual] === n.v ? ' elegida' : '') + '" data-v="' + n.v + '" role="radio" aria-checked="' + (respuestas[actual] === n.v) + '">' +
+      var sel = respuestas[q.id] === n.v;
+      html += '<button type="button" class="nivel' + (sel ? ' elegida' : '') + '" data-v="' + n.v + '" role="radio" aria-checked="' + sel + '">' +
               '<span class="num">' + n.v + '</span><span class="etq">' + n.t + '</span></button>';
     });
-    html += '</div><div class="nav-pregunta"><button type="button" class="volver" id="btnVolver"' + (actual === 0 ? ' disabled' : '') + '>Anterior</button>' +
+    html += '</div><div class="nav-pregunta"><button type="button" class="volver" id="btnVolver"' + (idx === 0 ? ' disabled' : '') + '>Anterior</button>' +
             '<span class="ayuda-teclas">Podés usar las teclas 1 a 5</span></div>';
     d.innerHTML = html;
     tarjeta.appendChild(d);
-
     var botones = d.querySelectorAll('.nivel');
     for (var k = 0; k < botones.length; k++) {
       botones[k].addEventListener('click', function (e) {
@@ -710,186 +358,287 @@
   function responder(v, btn) {
     if (bloqueado) return;
     bloqueado = true;
-    respuestas[actual] = v;
+    var q = seq[idx];
+    respuestas[q.id] = v;
     if (btn) btn.classList.add('elegida');
-    actual++;
-    actualizarProgreso(actual);
+    if (q.part === 1) {          // si cambia el panorama general, la parte 2 se vuelve a calcular
+      seq = P1.slice();
+      parte2Lista = false;
+    }
+    idx++;
     setTimeout(function () {
-      if (actual < PREGUNTAS.length) {
+      if (idx < seq.length) {
         cambiarPantalla(mostrarPregunta, false);
+      } else if (!parte2Lista) {
+        enPregunta = false;
+        cambiarPantalla(mostrarAreas, false);
       } else {
         enPregunta = false;
+        setProgreso(seq.length, 'Listo');
         cambiarPantalla(mostrarResultado, false);
       }
     }, 220);
   }
 
   function volver() {
-    if (bloqueado || actual === 0) return;
+    if (bloqueado || idx === 0) return;
     bloqueado = true;
-    actual--;
-    actualizarProgreso(actual);
+    idx--;
     cambiarPantalla(mostrarPregunta, true);
   }
 
   document.addEventListener('keydown', function (e) {
     if (!enPregunta || bloqueado) return;
     if (e.key >= '1' && e.key <= '5') {
-      var btn = tarjeta.querySelector('.nivel[data-v="' + e.key + '"]');
-      responder(parseInt(e.key, 10), btn);
+      responder(parseInt(e.key, 10), tarjeta.querySelector('.nivel[data-v="' + e.key + '"]'));
     } else if (e.key === 'ArrowLeft') {
       volver();
     }
   });
 
+  /* ---------- TRANSICIÓN: ELECCIÓN DE ÁREAS A PROFUNDIZAR ---------- */
+  function mostrarAreas() {
+    enPregunta = false;
+    var punt = AREAS.map(function (a, i) { return { i: i, s: respuestas[P1[i].id] || 1 }; });
+    punt.sort(function (a, b) { return b.s - a.s || a.i - b.i; });
+    var umbral = punt[N_AREAS_EXPLORAR - 1].s;
+    var fijas = punt.filter(function (p) { return p.s > umbral; });
+    var empatadas = punt.filter(function (p) { return p.s === umbral; });
+    var cupos = N_AREAS_EXPLORAR - fijas.length;
+    var hayEleccion = empatadas.length > cupos;
+    var elegidas = [];
+
+    setProgreso(P1.length, 'Parte 1 completa');
+
+    var d = document.createElement('div');
+    d.className = 'pantalla pantalla-areas';
+    var html = '<span class="seccion">Fin de la parte 1</span><h2>Estas son las áreas que más te interesaron</h2>' +
+               '<p class="sub">Ahora vamos a profundizar con preguntas más específicas de estas áreas.</p><div class="area-lista">';
+    fijas.forEach(function (p) {
+      html += '<div class="area-fija"><span>' + esc(AREAS[p.i].n) + '</span><span class="rot">Seleccionada</span></div>';
+    });
+    if (!hayEleccion) {
+      empatadas.forEach(function (p) {
+        html += '<div class="area-fija"><span>' + esc(AREAS[p.i].n) + '</span><span class="rot">Seleccionada</span></div>';
+      });
+    }
+    html += '</div>';
+    if (hayEleccion) {
+      html += '<div class="aviso-empate">Tenés ' + empatadas.length + ' áreas con el mismo puntaje. Elegí ' + cupos + (cupos === 1 ? ' que querés' : ' que querés') + ' profundizar.</div><div class="area-lista" id="listaEmpate">';
+      empatadas.forEach(function (p) {
+        html += '<button type="button" class="area-op" data-i="' + p.i + '"><span>' + esc(AREAS[p.i].n) + '</span><span class="tilde">Elegir</span></button>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="nav-pregunta"><button type="button" class="volver" id="btnVolverAreas">Anterior</button>' +
+            '<button type="button" class="btn" id="btnSeguir"' + (hayEleccion ? ' disabled' : '') + '>Continuar</button></div>';
+    d.innerHTML = html;
+    tarjeta.appendChild(d);
+
+    var btnSeguir = document.getElementById('btnSeguir');
+    if (hayEleccion) {
+      var ops = d.querySelectorAll('.area-op');
+      for (var k = 0; k < ops.length; k++) {
+        ops[k].addEventListener('click', function (e) {
+          var b = e.currentTarget, i = parseInt(b.getAttribute('data-i'), 10), pos = elegidas.indexOf(i);
+          if (pos >= 0) { elegidas.splice(pos, 1); b.classList.remove('sel'); b.querySelector('.tilde').textContent = 'Elegir'; }
+          else if (elegidas.length < cupos) { elegidas.push(i); b.classList.add('sel'); b.querySelector('.tilde').textContent = 'Elegida'; }
+          btnSeguir.disabled = elegidas.length !== cupos;
+        });
+      }
+    }
+    document.getElementById('btnVolverAreas').addEventListener('click', function () {
+      if (bloqueado) return;
+      bloqueado = true;
+      idx = P1.length - 1;
+      cambiarPantalla(mostrarPregunta, true);
+    });
+    btnSeguir.addEventListener('click', function () {
+      if (bloqueado || btnSeguir.disabled) return;
+      bloqueado = true;
+      var ids = fijas.map(function (p) { return p.i; });
+      ids = ids.concat(hayEleccion ? elegidas : empatadas.map(function (p) { return p.i; }));
+      areasElegidas = ids;
+      var parte2 = [];
+      ids.forEach(function (a) { parte2 = parte2.concat(ESP[a]); });
+      seq = P1.concat(parte2, P3);
+      parte2Lista = true;
+      idx = P1.length;
+      cambiarPantalla(mostrarPregunta, false);
+    });
+  }
+
   /* ---------- CÁLCULO ---------- */
   function calcular() {
-    // Puntaje por carrera y por perfil
-    var scCarrera = {}, mxCarrera = {};
-    var scPerfil = {}, mxPerfil = {};
-    CARRERAS.forEach(function (c) { scCarrera[c.id] = 0; mxCarrera[c.id] = 0; });
-    ORDEN.forEach(function (k) { scPerfil[k] = 0; mxPerfil[k] = 0; });
-
-    PREGUNTAS.forEach(function (q, i) {
-      var v = respuestas[i]; // 1..5
-      var puntos = (v - 1);  // 0..4
-      q.w.forEach(function (par) {
-        if (par.tipo === 'carrera') {
-          if (scCarrera[par.id] !== undefined) {
-            scCarrera[par.id] += puntos * par.p;
-            mxCarrera[par.id] += 4 * par.p;
-          }
-        } else if (par.tipo === 'perfil') {
-          scPerfil[par.id] += puntos * par.p;
-          mxPerfil[par.id] += 4 * par.p;
-        }
+    var sc = {}, mx = {};
+    CARRERAS.forEach(function (c) { sc[c.mn] = 0; mx[c.mn] = 0; });
+    seq.forEach(function (q) {
+      var v = respuestas[q.id];
+      if (!v) return;
+      Object.keys(q.w).forEach(function (mn) {
+        sc[mn] += (v - 1) * q.w[mn];
+        mx[mn] += 4 * q.w[mn];
       });
     });
-
-    // Bonus de perfil a las carreras de ese perfil
-    CARRERAS.forEach(function (c) {
-      if (mxPerfil[c.c] > 0) {
-        var bonus = (scPerfil[c.c] / mxPerfil[c.c]) * 12; // hasta 12 puntos extra
-        scCarrera[c.id] += bonus;
-        mxCarrera[c.id] += 12;
-      }
-    });
-
-    var lista = CARRERAS.map(function (c) {
-      var pct = mxCarrera[c.id] ? Math.round(100 * scCarrera[c.id] / mxCarrera[c.id]) : 0;
-      return { c: c, pct: pct };
+    var lista = CARRERAS.filter(function (c) { return areasElegidas.indexOf(c.a) >= 0; }).map(function (c) {
+      return { c: c, pct: mx[c.mn] ? Math.round(100 * sc[c.mn] / mx[c.mn]) : 0 };
     });
     lista.sort(function (a, b) { return b.pct - a.pct || a.c.n.localeCompare(b.c.n); });
 
-    // Ranking de perfiles
-    var perfilPct = {};
-    ORDEN.forEach(function (k) {
-      // Promedio de las 3 mejores carreras del perfil + score directo del perfil
-      var pcts = lista.filter(function (x) { return x.c.c === k; }).map(function (x) { return x.pct; });
-      var top3 = pcts.slice(0, 3);
-      var avgTop = top3.length ? top3.reduce(function (a, b) { return a + b; }, 0) / top3.length : 0;
-      var directo = mxPerfil[k] ? (100 * scPerfil[k] / mxPerfil[k]) : 0;
-      perfilPct[k] = Math.round(avgTop * 0.65 + directo * 0.35);
+    var info = areasElegidas.map(function (a) {
+      var pcts = lista.filter(function (x) { return x.c.a === a; }).map(function (x) { return x.pct; }).slice(0, 2);
+      var prom = pcts.reduce(function (s, p) { return s + p; }, 0) / (pcts.length || 1);
+      return { a: a, pct: Math.round(prom), p1: respuestas[P1[a].id] || 1 };
     });
-    var ranking = ORDEN.slice().sort(function (a, b) {
-      return perfilPct[b] - perfilPct[a] || ORDEN.indexOf(a) - ORDEN.indexOf(b);
-    });
-
-    return { lista: lista, perfil: perfilPct, ranking: ranking };
+    info.sort(function (x, y) { return y.pct - x.pct || y.p1 - x.p1 || x.a - y.a; });
+    return { lista: lista, areas: info };
   }
 
-  function tarjetaCarrera(x, color, otra, delay) {
+  /* ---------- RENDER DE CARRERAS ---------- */
+  function etiquetasHTML(c) {
+    return '<div class="etiquetas"><span class="etq-tag uni">' + esc(c.u) + '</span>' +
+           '<span class="etq-tag dur">' + esc(fmtDur(c)) + '</span>' +
+           '<span class="etq-tag">' + esc(c.t) + '</span>' +
+           '<span class="etq-tag sede">' + esc(c.s) + '</span></div>';
+  }
+  function fila(titulo, txt) {
+    return txt ? '<p><strong>' + titulo + ':</strong> ' + esc(txt) + '</p>' : '';
+  }
+  function detalleHTML(c) {
+    return '<div class="detalle">' +
+      fila('Facultad o unidad', c.f) +
+      fila('Modalidad', fmtMod(c)) +
+      fila('Plan de estudios', c.plan) +
+      fila('Actividades profesionales', c.act) +
+      fila('Dónde se puede trabajar', c.amb) +
+      fila('Habilidades e intereses', c.hab) +
+      '<p><strong>Fuente oficial:</strong><br>' + linksFuente(c) + '</p>' +
+      '</div>';
+  }
+  function barraAfin(pct) {
+    return '<div class="afin-fila"><span>Afinidad con tus respuestas</span><span>' + pct + '%</span></div>' +
+           '<div class="afin-barra"><div data-w="' + pct + '"></div></div>';
+  }
+  function cardCompleta(x, delay) {
     var c = x.c;
-    return '<article class="carrera' + (otra ? ' otra' : '') + '" style="animation-delay:' + delay + 's">' +
-      '<h4>' + c.n + '</h4>' +
-      '<div class="etiquetas"><span class="etq-tag uni">' + c.u + '</span><span class="etq-tag dur">' + c.y + '</span><span class="etq-tag">' + c.t + '</span></div>' +
-      '<div class="afin-fila"><span>Afinidad con tus respuestas</span><span>' + x.pct + '%</span></div>' +
-      '<div class="afin-barra"><div data-w="' + x.pct + '" style="background:' + color + '"></div></div>' +
-      '<p>' + c.p + '</p>' +
-      '<details><summary>Ver más detalles</summary><p><strong>Facultad:</strong> ' + c.f + '.<br><strong>Sede:</strong> ' + c.sede + '.<br><strong>Qué se estudia:</strong> ' + c.e + '</p></details>' +
+    return '<article class="carrera" style="animation-delay:' + delay + 's">' +
+      '<h4>' + esc(c.n) + '</h4>' + etiquetasHTML(c) + barraAfin(x.pct) +
+      '<p>' + esc(c.perfil) + '</p>' +
+      '<details><summary>Ver más información</summary>' + detalleHTML(c) + '</details>' +
       '</article>';
+  }
+  function cardMini(x) {
+    var c = x.c;
+    return '<details class="mini"><summary><span class="mini-nombre">' + esc(c.n) +
+      '<small>' + esc(c.u) + ' · ' + esc(c.s) + '</small></span><span class="mini-pct">' + x.pct + '%</span></summary>' +
+      '<div class="afin-barra"><div data-w="' + x.pct + '"></div></div>' + etiquetasHTML(c) +
+      '<p style="font-size:.94rem;color:var(--texto-suave)">' + esc(c.perfil) + '</p>' + detalleHTML(c) + '</details>';
+  }
+  function animarBarras(root) {
+    setTimeout(function () {
+      var bs = root.querySelectorAll('.afin-barra > div[data-w]');
+      for (var i = 0; i < bs.length; i++) bs[i].style.width = bs[i].getAttribute('data-w') + '%';
+    }, 120);
   }
 
   /* ---------- RESULTADO ---------- */
   function mostrarResultado() {
     enPregunta = false;
-    var r = calcular();
-    var top = r.ranking[0], seg = r.ranking[1];
-    var P = PERFILES[top], S = PERFILES[seg];
-
-    var delPerfil = r.lista.filter(function (x) { return x.c.c === top; }).slice(0, 5);
-    var otras = r.lista.filter(function (x) { return x.c.c !== top; }).slice(0, 4);
-
-    var maxPct = r.lista[0].pct;
-    var minRelevante = r.lista[Math.min(15, r.lista.length - 1)].pct;
+    var R = calcular();
+    var principal = R.areas[0];
+    var A = AREAS[principal.a];
+    var sede = 'all';
+    var maxPct = R.lista.length ? R.lista[0].pct : 0, minPct = R.lista.length ? R.lista[R.lista.length - 1].pct : 0;
 
     var d = document.createElement('div');
     d.className = 'pantalla';
-    d.style.setProperty('--acento', P.color);
-
     var html =
       '<div class="resultado-cabecera">' +
-        '<div class="etiqueta">Tu perfil sugerido</div>' +
-        '<h2>' + P.nombre + '</h2>' +
-        '<p class="lema">' + P.lema + '</p>' +
-        '<p class="mensaje">' + P.msg + '</p>' +
+        '<div class="etiqueta">Tu área de mayor afinidad</div>' +
+        '<h2>' + esc(A.n) + '</h2>' +
+        '<p class="lema">' + esc(A.lema) + '</p>' +
+        '<p class="mensaje">' + esc(A.msg) + '</p>' +
       '</div>';
-
-    if (maxPct - minRelevante < 18) {
-      html += '<div class="nota">Tus respuestas fueron bastante parejas. El resultado es orientativo. Si querés más precisión, repetí el test usando más los extremos de la escala (1 y 5).</div>';
+    if (maxPct - minPct < 20) {
+      html += '<div class="nota">Tus respuestas fueron muy parejas, así que el resultado es menos preciso. Si querés, repetí el test usando más los extremos de la escala (1 y 5).</div>';
     }
-
-    html += '<h3>Carreras recomendadas para tu perfil</h3><p class="sub">Ordenadas de mayor a menor afinidad con lo que respondiste.</p><div class="carreras">';
-    delPerfil.forEach(function (x, i) { html += tarjetaCarrera(x, P.color, false, i * 0.08); });
-    html += '</div>';
-
-    html += '<h3>Otras carreras que también encajan con vos</h3><p class="sub">Aunque pertenecen a otros perfiles, tus respuestas muestran afinidad con ellas.</p><div class="carreras">';
-    otras.forEach(function (x, i) { html += tarjetaCarrera(x, '#4f8cff', true, i * 0.08); });
-    html += '</div>';
-
-    var segCarreras = r.lista.filter(function (x) { return x.c.c === seg; }).slice(0, 4).map(function (x) { return x.c.n; });
-    html += '<div class="segunda"><strong>Segundo perfil más cercano:</strong> ' + S.nombre + '. Mirá también: ' + segCarreras.join(', ') + '.</div>';
-
-    html += '<h3>Ranking completo</h3><details><summary>Ver la afinidad con las ' + CARRERAS.length + ' carreras</summary><div class="ranking">';
-    r.lista.forEach(function (x) {
-      var col = PERFILES[x.c.c] ? PERFILES[x.c.c].color : '#888';
-      html += '<div><div class="fila-nombre"><span>' + x.c.n + ' <small>(' + x.c.u + ')</small></span><span>' + x.pct + '%</span></div>' +
-              '<div class="afin-barra"><div data-w="' + x.pct + '" style="background:' + col + '"></div></div></div>';
-    });
-    html += '</div></details>';
-
     html +=
+      '<h3>¿En qué sede podrías estudiar?</h3>' +
+      '<div class="filtros" id="filtros">' +
+        '<button type="button" class="filtro activo" data-s="all">Todas las sedes</button>' +
+        '<button type="button" class="filtro" data-s="res">Resistencia (Chaco)</button>' +
+        '<button type="button" class="filtro" data-s="cor">Corrientes</button>' +
+      '</div>' +
+      '<h3>Tus carreras con mayor afinidad</h3>' +
+      '<p class="sub">Ordenadas de mayor a menor afinidad con lo que respondiste, dentro de tus tres áreas de mayor interés.</p>' +
+      '<div class="carreras" id="listaTop"></div>' +
+      '<div id="bloqueMas"><h3>Más opciones en tus áreas de interés</h3><p class="sub">Tocá una carrera para ver su información completa.</p><div class="carreras" id="listaMas"></div></div>' +
+      '<h3>Tus áreas exploradas</h3><div class="areas-resumen">';
+    R.areas.forEach(function (x) {
+      html += '<div><div class="fila"><span>' + esc(AREAS[x.a].n) + '</span><span>' + x.pct + '%</span></div>' +
+              '<div class="afin-barra"><div data-w="' + x.pct + '"></div></div></div>';
+    });
+    html +=
+      '</div>' +
+      '<h3>Explorar todas las carreras de la zona</h3>' +
+      '<p class="sub">Si querés ver otras opciones fuera de tus áreas principales, acá están las ' + CARRERAS.length + ' carreras agrupadas por área.</p>' +
+      '<div class="catalogo" id="catalogo"></div>' +
       '<div class="acciones">' +
         '<button type="button" class="btn" id="btnCompartir">Compartir resultado</button>' +
         '<button type="button" class="btn secundario" id="btnRepetir">Repetir el test</button>' +
       '</div>' +
-      '<p class="aviso">Este test es una guía orientativa, no un diagnóstico. Antes de decidir, explorá también otras carreras, hablá con estudiantes y profesionales y visitá las facultades. La decisión final es tuya.</p>' +
+      '<p class="aviso">Este test es una guía orientativa, no un diagnóstico. Los datos de duración, sede y modalidad deben confirmarse en los sitios oficiales de cada facultad antes de decidir. Explorá otras carreras, hablá con estudiantes y profesionales y visitá las facultades. La decisión final es tuya.</p>';
       '<p class="autor">Desarrollado por Dureco Ingenieria · Carreras UNNE y UTN FRRE · Uso educativo gratuito · Prohibida su comercialización sin autorización</p>';
-
     d.innerHTML = html;
     tarjeta.appendChild(d);
 
-    setTimeout(function () {
-      var bs = d.querySelectorAll('.afin-barra > div');
-      for (var i = 0; i < bs.length; i++) bs[i].style.width = bs[i].getAttribute('data-w') + '%';
-    }, 150);
+    function sedeOk(c) {
+      if (sede === 'res') return /Chaco/i.test(c.s);
+      if (sede === 'cor') return /Corrientes/i.test(c.s);
+      return true;
+    }
+    function pintar() {
+      var f = R.lista.filter(function (x) { return sedeOk(x.c); });
+      var top = f.slice(0, 6), mas = f.slice(6);
+      var lt = d.querySelector('#listaTop'), lm = d.querySelector('#listaMas');
+      lt.innerHTML = top.length ? top.map(function (x, i) { return cardCompleta(x, i * 0.08); }).join('')
+                                : '<p class="vacio">No hay carreras de tus áreas de interés en esa sede. Probá con otra opción o mirá el listado completo más abajo.</p>';
+      d.querySelector('#bloqueMas').style.display = mas.length ? '' : 'none';
+      lm.innerHTML = mas.map(cardMini).join('');
+      var cat = '';
+      AREAS.forEach(function (a) {
+        var cs = CARRERAS.filter(function (c) { return c.a === AREAS.indexOf(a) && sedeOk(c); });
+        if (!cs.length) return;
+        cat += '<details><summary>' + esc(a.n) + ' (' + cs.length + ')</summary><ul>' +
+          cs.map(function (c) { return '<li>' + esc(c.n) + '<small>' + esc(c.u) + ' · ' + esc(c.s) + ' · ' + esc(fmtDur(c)) + '</small></li>'; }).join('') +
+          '</ul></details>';
+      });
+      d.querySelector('#catalogo').innerHTML = cat || '<p class="vacio">No hay carreras en esa sede.</p>';
+      animarBarras(d);
+    }
+    pintar();
 
-    var det = d.querySelectorAll('details');
-    for (var j = 0; j < det.length; j++) {
-      det[j].addEventListener('toggle', function (ev) {
-        var bs2 = ev.currentTarget.querySelectorAll('.afin-barra > div');
-        for (var k = 0; k < bs2.length; k++) bs2[k].style.width = bs2[k].getAttribute('data-w') + '%';
+    var fs = d.querySelectorAll('.filtro');
+    for (var i = 0; i < fs.length; i++) {
+      fs[i].addEventListener('click', function (e) {
+        sede = e.currentTarget.getAttribute('data-s');
+        for (var j = 0; j < fs.length; j++) fs[j].classList.toggle('activo', fs[j] === e.currentTarget);
+        pintar();
       });
     }
+    // barras dentro de desplegables: se animan al abrir
+    d.addEventListener('toggle', function (ev) {
+      if (ev.target && ev.target.querySelectorAll) animarBarras(ev.target);
+    }, true);
 
-    document.getElementById('btnRepetir').addEventListener('click', function () {
+    d.querySelector('#btnRepetir').addEventListener('click', function () {
       if (bloqueado) return;
       bloqueado = true;
       cambiarPantalla(mostrarBienvenida, true);
     });
-    document.getElementById('btnCompartir').addEventListener('click', function () {
-      var texto = 'Hice el test vocacional (UNNE / UTN FRRe). Mi perfil sugerido es "' + P.nombre + '". Carreras con más afinidad: ' +
-                  r.lista.slice(0, 3).map(function (x) { return x.c.n + ' (' + x.pct + '%)'; }).join(', ') + '.';
+    d.querySelector('#btnCompartir').addEventListener('click', function () {
+      var texto = 'Hice el test vocacional. Mi área de mayor afinidad es "' + A.n + '". Carreras con más afinidad: ' +
+                  R.lista.slice(0, 3).map(function (x) { return x.c.n + ' (' + x.c.u + ', ' + x.pct + '%)'; }).join('; ') + '.';
       if (navigator.share) {
         navigator.share({ title: 'Mi resultado vocacional', text: texto }).catch(function () {});
       } else if (navigator.clipboard && navigator.clipboard.writeText) {
